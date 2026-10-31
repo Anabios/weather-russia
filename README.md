@@ -47,7 +47,7 @@ No installation or node modules required. Run directly in any modern web browser
 
 ```bash
 # Clone the repository
-git clone [https://github.com/your-username/weather-russia.git](https://github.com/your-username/weather-russia.git)
+git clone [https://github.com/Anabios/weather-russia.git](https://github.com/Anabios/weather-russia.git)
 
 # Navigate into the project folder
 cd weather-russia

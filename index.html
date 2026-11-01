@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Погода в мегаполисах России | 01.11.2026</title>
+  <title>Погода в мегаполисах России | Сводка на 1 ноября 2026</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
     body {
@@ -17,6 +17,10 @@
       min-height: 100vh;
       background-color: #070913;
       transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .font-mono-num {
+      font-family: 'JetBrains Mono', monospace;
     }
 
     /* Glassmorphism Styles */
@@ -76,7 +80,7 @@
       transition: background 0.8s ease;
     }
 
-    /* Keyframe Animations */
+    /* Landmark Animation */
     @keyframes pulse-star {
       0%, 100% { opacity: 0.85; transform: scale(1); filter: drop-shadow(0 0 4px #ef4444); }
       50% { opacity: 1; transform: scale(1.25); filter: drop-shadow(0 0 16px #f87171); }
@@ -128,6 +132,11 @@
 
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* Toast Notification */
+    #toastNotification {
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
   </style>
 </head>
 <body class="flex items-center justify-center p-2.5 sm:p-5 md:p-8 relative selection:bg-amber-500 selection:text-white">
@@ -136,36 +145,51 @@
   <div id="ambientOrb" class="ambient-glow -top-32 -left-32"></div>
   <div id="ambientOrb2" class="ambient-glow -bottom-40 -right-20"></div>
 
+  <!-- Toast Notification Box (No alert() used) -->
+  <div id="toastNotification" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 pointer-events-none opacity-0 translate-y-[-20px] flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-emerald-500/90 text-white font-medium text-xs sm:text-sm shadow-2xl backdrop-blur-md border border-white/20">
+    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="toastMessage">Сообщение скопировано!</span>
+  </div>
+
   <!-- Main Container -->
   <main class="w-full max-w-4xl relative z-10 mx-auto">
     
     <!-- Top Header & Cities Navigator -->
     <header class="mb-4 space-y-3">
       
-      <!-- Top Bar: Source + Date + Prev/Next Buttons + Audio -->
-      <div class="flex items-center justify-between gap-3">
+      <!-- Top Bar: Source + Date + Prev/Next Buttons + Actions -->
+      <div class="flex flex-wrap items-center justify-between gap-3">
         
-        <!-- Yandex Weather Source & Date Badge -->
+        <!-- Yandex Weather Source & Current Date Badge -->
         <div class="flex items-center gap-2.5 px-3 py-1.5 rounded-2xl bg-black/60 border border-white/10 backdrop-blur-md">
           <div class="w-6 h-6 rounded-xl bg-gradient-to-tr from-amber-500 to-red-500 flex items-center justify-center font-bold text-xs text-white shadow-md">
             Я
           </div>
           <div class="flex flex-col">
             <div class="flex items-center gap-1.5">
-              <span class="text-xs font-bold text-white tracking-wide">Яндекс Погода</span>
+              <span class="text-xs font-bold text-white tracking-wide">Яндекс Погода • Онлайн</span>
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             </div>
-            <span class="text-[11px] text-amber-300 font-semibold font-mono tracking-tight">01.11.2026 (1 ноября 2026)</span>
+            <span class="text-[11px] text-amber-300 font-semibold font-mono-num tracking-tight">1 ноября 2026 г., воскресенье</span>
           </div>
         </div>
 
-        <!-- Controls: Prev/Next & Sound -->
+        <!-- Right Quick Controls: Copy VK Post, Navigator & Sound -->
         <div class="flex items-center gap-2">
+          
+          <!-- Copy for VK Button -->
+          <button onclick="copyVKPostText()" title="Скопировать готовый пост для стены ВКонтакте" class="px-3 py-1.5 rounded-xl bg-gradient-to-r from-blue-600/80 to-indigo-600/80 hover:from-blue-600 hover:to-indigo-600 border border-white/20 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg active:scale-95 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+            <span class="hidden sm:inline">Скопировать для ВК</span>
+            <span class="sm:hidden">Пост ВК</span>
+          </button>
+
+          <!-- City Navigator (Arrows + Counter) -->
           <div class="flex items-center bg-black/40 rounded-xl border border-white/10 p-0.5">
             <button onclick="navigateCity(-1)" title="Предыдущий город" class="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             </button>
-            <span id="cityCounterIndicator" class="px-2 text-xs font-mono font-bold text-white/80">1 / 5</span>
+            <span id="cityCounterIndicator" class="px-2 text-xs font-mono-num font-bold text-white/80">1 / 5</span>
             <button onclick="navigateCity(1)" title="Следующий город" class="p-2 text-white/70 hover:text-white hover:bg-white/10 rounded-lg transition-all">
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </button>
@@ -185,37 +209,37 @@
         <button onclick="selectCityByIndex(0)" data-city-index="0" class="city-tab glass-tab active px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-white flex items-center gap-2 shrink-0">
           <span class="w-5 h-5 rounded-md bg-white/20 text-[11px] font-bold flex items-center justify-center text-amber-300">1</span>
           <span>Москва</span>
-          <span class="text-[11px] font-mono opacity-85 text-amber-300">+3°</span>
+          <span class="text-[11px] font-mono-num opacity-85 text-amber-300">+3°</span>
         </button>
 
         <button onclick="selectCityByIndex(1)" data-city-index="1" class="city-tab glass-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-white/70 hover:text-white flex items-center gap-2 shrink-0">
           <span class="w-5 h-5 rounded-md bg-white/10 text-[11px] font-bold flex items-center justify-center">2</span>
           <span>Санкт-Петербург</span>
-          <span class="text-[11px] font-mono opacity-85 text-cyan-300">+4°</span>
+          <span class="text-[11px] font-mono-num opacity-85 text-cyan-300">+4°</span>
         </button>
 
         <button onclick="selectCityByIndex(2)" data-city-index="2" class="city-tab glass-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-white/70 hover:text-white flex items-center gap-2 shrink-0">
           <span class="w-5 h-5 rounded-md bg-white/10 text-[11px] font-bold flex items-center justify-center">3</span>
           <span>Новосибирск</span>
-          <span class="text-[11px] font-mono opacity-85 text-sky-300">-2°</span>
+          <span class="text-[11px] font-mono-num opacity-85 text-sky-300">-2°</span>
         </button>
 
         <button onclick="selectCityByIndex(3)" data-city-index="3" class="city-tab glass-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-white/70 hover:text-white flex items-center gap-2 shrink-0">
           <span class="w-5 h-5 rounded-md bg-white/10 text-[11px] font-bold flex items-center justify-center">4</span>
           <span>Екатеринбург</span>
-          <span class="text-[11px] font-mono opacity-85 text-purple-300">-1°</span>
+          <span class="text-[11px] font-mono-num opacity-85 text-purple-300">-1°</span>
         </button>
 
         <button onclick="selectCityByIndex(4)" data-city-index="4" class="city-tab glass-tab px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-white/70 hover:text-white flex items-center gap-2 shrink-0">
           <span class="w-5 h-5 rounded-md bg-white/10 text-[11px] font-bold flex items-center justify-center">5</span>
           <span>Казань</span>
-          <span class="text-[11px] font-mono opacity-85 text-emerald-300">+2°</span>
+          <span class="text-[11px] font-mono-num opacity-85 text-emerald-300">+2°</span>
         </button>
       </nav>
     </header>
 
     <!-- Main Glass Card Container -->
-    <article class="glass-panel rounded-3xl p-5 sm:p-7 relative overflow-hidden shadow-2xl">
+    <article id="mainWeatherCard" class="glass-panel rounded-3xl p-5 sm:p-7 relative overflow-hidden shadow-2xl">
       
       <!-- Ambient Canvas Particles (Rain, Wet Snow, Sleet) -->
       <canvas id="weatherCanvas" class="absolute inset-0 pointer-events-none w-full h-full z-0 opacity-75"></canvas>
@@ -251,9 +275,9 @@
                 <svg class="w-3.5 h-3.5 text-amber-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a8 8 0 100 16 8 8 0 000-16zm1 11H9v-2h2v2zm0-4H9V5h2v4z"/></svg>
                 Микроклимат на объекте
               </span>
-              <span id="inspHeight" class="text-amber-300 font-mono text-[11px]">высота</span>
+              <span id="inspHeight" class="text-amber-300 font-mono-num text-[11px]">высота</span>
             </div>
-            <div class="grid grid-cols-3 gap-1.5 text-center pt-1 font-mono">
+            <div class="grid grid-cols-3 gap-1.5 text-center pt-1 font-mono-num">
               <div class="bg-black/30 p-1.5 rounded-lg">
                 <span class="block text-[10px] text-white/40">Температура</span>
                 <span id="inspTemp" class="text-xs font-bold text-white">-</span>
@@ -275,7 +299,7 @@
           </p>
 
           <div class="flex items-center justify-between text-[11px] text-white/50 pt-1">
-            <span>Метеодатчик: <strong class="text-emerald-400">Активен</strong></span>
+            <span>Метеодатчик: <strong class="text-emerald-400">Активен онлайн</strong></span>
             <button onclick="closeLandmarkInspector()" class="px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-semibold hover:bg-amber-500/30">Свернуть</button>
           </div>
         </div>
@@ -289,15 +313,15 @@
           
           <!-- City Title & Status -->
           <div class="space-y-1">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
               <span id="cityNumberTag" class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">
                 №1 в списке
               </span>
               <span id="regionTag" class="px-2.5 py-0.5 rounded-md text-[11px] font-semibold uppercase tracking-wider bg-white/10 text-white/90 border border-white/10">
                 Столица России
               </span>
-              <span id="selectedHourBadge" class="text-xs text-amber-300 font-mono px-2 py-0.5 rounded bg-black/40 border border-amber-400/20">
-                14:00 (День)
+              <span id="selectedHourBadge" class="text-xs text-amber-300 font-mono-num px-2 py-0.5 rounded bg-black/40 border border-amber-400/20">
+                12:00 (День)
               </span>
             </div>
             
@@ -320,7 +344,7 @@
 
             <div class="flex flex-col">
               <div class="flex items-start">
-                <span id="temperatureVal" class="text-5xl sm:text-7xl font-extralight tracking-tighter text-white font-mono">
+                <span id="temperatureVal" class="text-5xl sm:text-7xl font-extralight tracking-tighter text-white font-mono-num">
                   +3
                 </span>
                 <span class="text-2xl sm:text-4xl font-light text-white/70 ml-0.5">°C</span>
@@ -351,7 +375,7 @@
         <!-- 4 Dayparts Table for 01.11.2026 -->
         <div class="mb-4">
           <div class="text-[11px] font-semibold text-white/60 uppercase tracking-wider mb-1.5">
-            Прогноз Яндекс Погоды по времени суток (01.11.2026):
+            Сводка Яндекс Погоды по времени суток (1 ноября 2026):
           </div>
           <div id="daypartsContainer" class="grid grid-cols-2 sm:grid-cols-4 gap-2">
             <!-- Dayparts injected dynamically -->
@@ -362,15 +386,15 @@
         <div class="glass-subcard rounded-2xl p-3.5 sm:p-4 mb-3">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-white tracking-wide">Суточный таймлайн 24 часа</span>
+              <span class="text-xs font-bold text-white tracking-wide">Суточный почасовой прогноз (24 ч)</span>
               <span class="text-[10px] text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30">01.11.2026</span>
             </div>
-            <span id="sliderTimeLabel" class="text-xs font-mono font-bold text-white bg-black/40 px-2.5 py-0.5 rounded-lg border border-white/10">14:00</span>
+            <span id="sliderTimeLabel" class="text-xs font-mono-num font-bold text-white bg-black/40 px-2.5 py-0.5 rounded-lg border border-white/10">12:00</span>
           </div>
 
           <!-- Scrubbing Range Slider -->
           <div class="py-1">
-            <input type="range" id="hourRangeSlider" min="0" max="23" value="14" class="w-full cursor-pointer" oninput="onHourSliderChange(this.value)">
+            <input type="range" id="hourRangeSlider" min="0" max="23" value="12" class="w-full cursor-pointer" oninput="onHourSliderChange(this.value)">
           </div>
 
           <!-- 24-Hour Horizontal Scrollable Nodes -->
@@ -392,10 +416,10 @@
             </div>
             <div class="mt-1.5">
               <div class="text-lg sm:text-xl font-bold text-white tracking-tight flex items-baseline gap-1">
-                <span id="windVal">4.8</span>
+                <span id="windVal">5.2</span>
                 <span class="text-xs font-normal text-white/60">м/с</span>
               </div>
-              <div id="windDirVal" class="text-[11px] text-white/60 font-medium">ЮЗ (225°)</div>
+              <div id="windDirVal" class="text-[11px] text-white/60 font-medium">СЗ (315°)</div>
             </div>
           </div>
 
@@ -403,7 +427,7 @@
           <div class="glass-subcard rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between">
             <div class="flex items-center justify-between text-white/50 text-xs">
               <span>Влажность</span>
-              <span id="precipProbVal" class="text-[10px] text-blue-300 font-mono">Осадки: 75%</span>
+              <span id="precipProbVal" class="text-[10px] text-blue-300 font-mono-num">Осадки: 80%</span>
             </div>
             <div class="mt-1.5">
               <div class="text-lg sm:text-xl font-bold text-white tracking-tight flex items-baseline gap-1">
@@ -426,10 +450,10 @@
             </div>
             <div class="mt-1.5">
               <div class="text-lg sm:text-xl font-bold text-white tracking-tight flex items-baseline gap-1">
-                <span id="pressureVal">744</span>
+                <span id="pressureVal">748</span>
                 <span class="text-xs font-normal text-white/60">мм рт. ст.</span>
               </div>
-              <div id="pressureStatusVal" class="text-[11px] text-amber-400 font-medium">циклон, ниже нормы</div>
+              <div id="pressureStatusVal" class="text-[11px] text-emerald-400 font-medium">в пределах нормы</div>
             </div>
           </div>
 
@@ -437,11 +461,11 @@
           <div class="glass-subcard rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between">
             <div class="flex items-center justify-between text-white/50 text-xs">
               <span>Световой день</span>
-              <span id="sunHoursVal" class="text-[10px] text-yellow-300 font-mono">07:48 - 16:51</span>
+              <span id="sunHoursVal" class="text-[10px] text-yellow-300 font-mono-num">07:48 - 16:51</span>
             </div>
             <div class="mt-1.5">
               <div class="text-sm font-bold text-white tracking-tight flex items-center justify-between">
-                <span id="aqiVal" class="text-emerald-400">AQI: 22 (Отличное)</span>
+                <span id="aqiVal" class="text-emerald-400">AQI: 18 (Отличное)</span>
               </div>
               <div id="geoFieldVal" class="text-[11px] text-white/60 font-medium pt-0.5">Магнитное поле: спокойное</div>
             </div>
@@ -454,12 +478,12 @@
       <!-- Footer Info -->
       <footer class="mt-4 pt-3 border-t border-white/5 flex flex-wrap items-center justify-between text-[11px] text-white/40 gap-2">
         <div class="flex items-center gap-2">
-          <span>Синтез данных:</span>
-          <span class="text-white/80 font-semibold">Яндекс Погода • Точный прогноз на 01.11.2026</span>
+          <span>Данные:</span>
+          <span class="text-white/80 font-semibold">Яндекс Погода • 01.11.2026</span>
         </div>
         <div class="flex items-center gap-3">
-          <span>Используйте стрелки ← / → на клавиатуре для смены городов</span>
-          <span class="hover:text-amber-300 cursor-pointer underline transition-colors" onclick="resetToCurrentHour()">К 14:00</span>
+          <span>Смена города: стрелки ← / →</span>
+          <span class="hover:text-amber-300 cursor-pointer underline transition-colors" onclick="resetToCurrentHour()">К текущему часу (12:00)</span>
         </div>
       </footer>
 
@@ -468,7 +492,7 @@
   </main>
 
   <script>
-    /* Complete Weather & Landmark Dataset for the 5 Cities on 01.11.2026 */
+    /* Complete Weather & Landmark Dataset for the 5 Cities as of 01.11.2026 */
     const citiesList = [
       /* 1. МОСКВА */
       {
@@ -485,55 +509,55 @@
           highlight: '#ef4444'
         },
         dayparts: [
-          { name: 'Ночь', hours: '00:00–06:00', temp: '+1°', feels: '-3°', icon: 'sleet', cond: 'Мокрый снег', wind: '4.5 м/с', press: '742 мм', precipProb: '85%' },
-          { name: 'Утро', hours: '06:00–12:00', temp: '+2°', feels: '-2°', icon: 'rain-snow', cond: 'Снег с дождём', wind: '5.1 м/с', press: '743 мм', precipProb: '80%' },
-          { name: 'День', hours: '12:00–18:00', temp: '+3°', feels: '-1°', icon: 'sleet', cond: 'Облачно, морось', wind: '4.8 м/с', press: '744 мм', precipProb: '75%' },
-          { name: 'Вечер', hours: '18:00–24:00', temp: '+1°', feels: '-3°', icon: 'sleet', cond: 'Мокрый снег, гололёд', wind: '4.2 м/с', press: '745 мм', precipProb: '70%' }
+          { name: 'Ночь', hours: '00:00–06:00', temp: '+1°', feels: '-3°', icon: 'sleet', cond: 'Мокрый снег', wind: '4.8 м/с', press: '747 мм', precipProb: '85%' },
+          { name: 'Утро', hours: '06:00–12:00', temp: '+2°', feels: '-2°', icon: 'rain-snow', cond: 'Снег с дождём', wind: '5.0 м/с', press: '748 мм', precipProb: '80%' },
+          { name: 'День', hours: '12:00–18:00', temp: '+3°', feels: '-1°', icon: 'sleet', cond: 'Мокрый снег с дождем', wind: '5.2 м/с', press: '748 мм', precipProb: '80%' },
+          { name: 'Вечер', hours: '18:00–24:00', temp: '+1°', feels: '-3°', icon: 'sleet', cond: 'Мокрый снег, гололёд', wind: '4.5 м/с', press: '749 мм', precipProb: '70%' }
         ],
         hours24: [
-          { hour: 0, temp: 1, feels: -3, icon: 'sleet', cond: 'Мокрый снег', prob: 85, wind: 4.5, dir: 'ЮЗ', deg: 225, hum: 92, press: 742 },
-          { hour: 1, temp: 1, feels: -3, icon: 'sleet', cond: 'Мокрый снег', prob: 85, wind: 4.6, dir: 'ЮЗ', deg: 225, hum: 92, press: 742 },
-          { hour: 2, temp: 0, feels: -4, icon: 'sleet', cond: 'Снежная крупа', prob: 90, wind: 4.7, dir: 'ЮЗ', deg: 225, hum: 93, press: 742 },
-          { hour: 3, temp: 0, feels: -4, icon: 'sleet', cond: 'Снежная крупа', prob: 90, wind: 4.8, dir: 'ЮЗ', deg: 225, hum: 93, press: 742 },
-          { hour: 4, temp: 1, feels: -3, icon: 'rain-snow', cond: 'Снег с дождём', prob: 85, wind: 5.0, dir: 'ЮЗ', deg: 225, hum: 92, press: 743 },
-          { hour: 5, temp: 1, feels: -3, icon: 'rain-snow', cond: 'Снег с дождём', prob: 85, wind: 5.0, dir: 'ЮЗ', deg: 225, hum: 91, press: 743 },
-          { hour: 6, temp: 1, feels: -3, icon: 'rain-snow', cond: 'Снег с дождём', prob: 80, wind: 5.1, dir: 'ЮЗ', deg: 225, hum: 91, press: 743 },
-          { hour: 7, temp: 2, feels: -2, icon: 'overcast', cond: 'Пасмурно, морось', prob: 75, wind: 5.2, dir: 'ЮЗ', deg: 225, hum: 90, press: 743 },
-          { hour: 8, temp: 2, feels: -2, icon: 'overcast', cond: 'Пасмурно, морось', prob: 75, wind: 5.2, dir: 'ЮЗ', deg: 225, hum: 89, press: 743 },
-          { hour: 9, temp: 2, feels: -2, icon: 'overcast', cond: 'Пасмурно, дымка', prob: 70, wind: 5.0, dir: 'ЮЗ', deg: 225, hum: 89, press: 744 },
-          { hour: 10, temp: 3, feels: -1, icon: 'sleet', cond: 'Мелкий дождь со снегом', prob: 70, wind: 4.9, dir: 'ЮЗ', deg: 225, hum: 88, press: 744 },
-          { hour: 11, temp: 3, feels: -1, icon: 'sleet', cond: 'Мелкий дождь со снегом', prob: 70, wind: 4.8, dir: 'ЮЗ', deg: 225, hum: 88, press: 744 },
-          { hour: 12, temp: 3, feels: -1, icon: 'sleet', cond: 'Мокрый снег с дождём', prob: 75, wind: 4.8, dir: 'ЮЗ', deg: 225, hum: 88, press: 744 },
-          { hour: 13, temp: 4, feels: 0, icon: 'overcast', cond: 'Пасмурно, слякоть', prob: 70, wind: 4.7, dir: 'ЮЗ', deg: 225, hum: 87, press: 744 },
-          { hour: 14, temp: 3, feels: -1, icon: 'sleet', cond: 'Мокрый снег с дождём', prob: 75, wind: 4.8, dir: 'ЮЗ', deg: 225, hum: 88, press: 744 },
-          { hour: 15, temp: 3, feels: -1, icon: 'sleet', cond: 'Снег с дождём', prob: 75, wind: 4.7, dir: 'ЮЗ', deg: 225, hum: 89, press: 744 },
-          { hour: 16, temp: 3, feels: -1, icon: 'overcast', cond: 'Пасмурно, сумерки', prob: 70, wind: 4.5, dir: 'ЮЗ', deg: 225, hum: 90, press: 745 },
-          { hour: 17, temp: 2, feels: -2, icon: 'sleet', cond: 'Мокрый снег', prob: 75, wind: 4.4, dir: 'Ю', deg: 180, hum: 91, press: 745 },
-          { hour: 18, temp: 2, feels: -2, icon: 'sleet', cond: 'Мокрый снег', prob: 75, wind: 4.3, dir: 'Ю', deg: 180, hum: 92, press: 745 },
-          { hour: 19, temp: 2, feels: -2, icon: 'sleet', cond: 'Снежная морось', prob: 70, wind: 4.2, dir: 'Ю', deg: 180, hum: 92, press: 745 },
-          { hour: 20, temp: 1, feels: -3, icon: 'sleet', cond: 'Мокрый снег, гололёд', prob: 70, wind: 4.2, dir: 'Ю', deg: 180, hum: 93, press: 745 },
-          { hour: 21, temp: 1, feels: -3, icon: 'sleet', cond: 'Мокрый снег', prob: 70, wind: 4.1, dir: 'Ю', deg: 180, hum: 94, press: 745 },
-          { hour: 22, temp: 1, feels: -3, icon: 'sleet', cond: 'Снежные зерна', prob: 65, wind: 4.0, dir: 'Ю', deg: 180, hum: 94, press: 746 },
-          { hour: 23, temp: 0, feels: -4, icon: 'sleet', cond: 'Замерзающий снег', prob: 65, wind: 4.0, dir: 'Ю', deg: 180, hum: 95, press: 746 }
+          { hour: 0, temp: 1, feels: -3, icon: 'sleet', cond: 'Мокрый снег', prob: 85, wind: 4.5, dir: 'СЗ', deg: 315, hum: 92, press: 747 },
+          { hour: 1, temp: 1, feels: -3, icon: 'sleet', cond: 'Мокрый снег', prob: 85, wind: 4.6, dir: 'СЗ', deg: 315, hum: 92, press: 747 },
+          { hour: 2, temp: 0, feels: -4, icon: 'sleet', cond: 'Снежная крупа', prob: 90, wind: 4.7, dir: 'СЗ', deg: 315, hum: 93, press: 747 },
+          { hour: 3, temp: 0, feels: -4, icon: 'sleet', cond: 'Снежная крупа', prob: 90, wind: 4.8, dir: 'СЗ', deg: 315, hum: 93, press: 747 },
+          { hour: 4, temp: 1, feels: -3, icon: 'rain-snow', cond: 'Снег с дождём', prob: 85, wind: 4.9, dir: 'СЗ', deg: 315, hum: 92, press: 748 },
+          { hour: 5, temp: 1, feels: -3, icon: 'rain-snow', cond: 'Снег с дождём', prob: 85, wind: 5.0, dir: 'СЗ', deg: 315, hum: 91, press: 748 },
+          { hour: 6, temp: 1, feels: -3, icon: 'rain-snow', cond: 'Снег с дождём', prob: 80, wind: 5.0, dir: 'СЗ', deg: 315, hum: 91, press: 748 },
+          { hour: 7, temp: 2, feels: -2, icon: 'overcast', cond: 'Пасмурно, морось', prob: 75, wind: 5.1, dir: 'СЗ', deg: 315, hum: 90, press: 748 },
+          { hour: 8, temp: 2, feels: -2, icon: 'overcast', cond: 'Пасмурно, морось', prob: 75, wind: 5.1, dir: 'СЗ', deg: 315, hum: 89, press: 748 },
+          { hour: 9, temp: 2, feels: -2, icon: 'overcast', cond: 'Пасмурно, сырость', prob: 75, wind: 5.2, dir: 'СЗ', deg: 315, hum: 89, press: 748 },
+          { hour: 10, temp: 3, feels: -1, icon: 'sleet', cond: 'Мокрый снег с дождем', prob: 80, wind: 5.2, dir: 'СЗ', deg: 315, hum: 88, press: 748 },
+          { hour: 11, temp: 3, feels: -1, icon: 'sleet', cond: 'Мокрый снег с дождем', prob: 80, wind: 5.2, dir: 'СЗ', deg: 315, hum: 88, press: 748 },
+          { hour: 12, temp: 3, feels: -1, icon: 'sleet', cond: 'Мокрый снег с дождем', prob: 80, wind: 5.2, dir: 'СЗ', deg: 315, hum: 88, press: 748 },
+          { hour: 13, temp: 3, feels: -1, icon: 'sleet', cond: 'Мокрый снег с дождем', prob: 75, wind: 5.1, dir: 'СЗ', deg: 315, hum: 87, press: 748 },
+          { hour: 14, temp: 3, feels: -1, icon: 'sleet', cond: 'Мокрый снег с дождем', prob: 75, wind: 5.0, dir: 'СЗ', deg: 315, hum: 88, press: 748 },
+          { hour: 15, temp: 3, feels: -1, icon: 'sleet', cond: 'Снег с дождём', prob: 75, wind: 4.9, dir: 'СЗ', deg: 315, hum: 89, press: 748 },
+          { hour: 16, temp: 2, feels: -2, icon: 'overcast', cond: 'Пасмурно, сумерки', prob: 70, wind: 4.8, dir: 'СЗ', deg: 315, hum: 90, press: 749 },
+          { hour: 17, temp: 2, feels: -2, icon: 'sleet', cond: 'Мокрый снег', prob: 75, wind: 4.6, dir: 'С', deg: 0, hum: 91, press: 749 },
+          { hour: 18, temp: 1, feels: -3, icon: 'sleet', cond: 'Мокрый снег, гололедица', prob: 75, wind: 4.5, dir: 'С', deg: 0, hum: 92, press: 749 },
+          { hour: 19, temp: 1, feels: -3, icon: 'sleet', cond: 'Снежная морось', prob: 70, wind: 4.4, dir: 'С', deg: 0, hum: 92, press: 749 },
+          { hour: 20, temp: 1, feels: -3, icon: 'sleet', cond: 'Мокрый снег, скользко', prob: 70, wind: 4.3, dir: 'С', deg: 0, hum: 93, press: 749 },
+          { hour: 21, temp: 1, feels: -3, icon: 'sleet', cond: 'Мокрый снег', prob: 70, wind: 4.2, dir: 'С', deg: 0, hum: 94, press: 750 },
+          { hour: 22, temp: 0, feels: -4, icon: 'sleet', cond: 'Снежные зерна', prob: 65, wind: 4.1, dir: 'С', deg: 0, hum: 94, press: 750 },
+          { hour: 23, temp: 0, feels: -4, icon: 'sleet', cond: 'Замерзающий снег', prob: 65, wind: 4.0, dir: 'С', deg: 0, hum: 95, press: 750 }
         ],
         landmarks: {
           moscow_city: {
             title: 'Башни «Москва-Сити»',
             type: 'Деловой комплекс небоскрёбов',
             height: 'Высота: 374 м («Федерация»)',
-            temp: '-1.8°C (на смотровой PANORAMA360)',
-            wind: '13.8 м/с (порывы до 18 м/с)',
+            temp: '-1.2°C (на смотровой PANORAMA360, 354м)',
+            wind: '14.2 м/с (порывы ветра в высотном коридоре)',
             visibility: '7 км (в облачной дымке)',
-            fact: 'Из-за перепада высоты в 370 метров над Москвой-рекой температура на верхних этажах башен «Восток» и «Эволюция» на 4-5 градусов ниже, чем на набережной, а ветер создает эффект аэродинамической трубы.'
+            fact: 'Из-за высоты в 374 метра температура на верхних этажах башен «Восток» и «Эволюция» на 4-5 градусов ниже, чем на набережной, а ветер создаёт эффект аэродинамической трубы над излучиной Москвы-реки.'
           },
           spasskaya: {
             title: 'Спасская башня Кремля',
             type: 'Главные ворота Московского Кремля',
             height: 'Высота: 71 м (со звездой)',
-            temp: '+1.5°C (на уровне Курантов)',
-            wind: '7.2 м/с',
+            temp: '+1.8°C (на уровне Курантов)',
+            wind: '7.0 м/с',
             visibility: '8 км',
-            fact: 'Рубиновая кремлёвская звезда на вершине весит около 1 тонны и вращается как флюгер от направления ветра. Куранты отапливаются изнутри специальной термосистемой.'
+            fact: 'Рубиновая кремлёвская звезда на вершине весит около 1 тонны и вращается на подшипниках от направления ветра. Знаменитые куранты подогреваются изнутри специальной термосистемой.'
           },
           vasily: {
             title: 'Собор Василия Блаженного',
@@ -542,7 +566,7 @@
             temp: '+2.8°C',
             wind: '5.5 м/с',
             visibility: '8 км',
-            fact: 'Шедевр русского зодчества XVI века состоит из 9 отдельных церквей на едином фундаменте. Разноцветные фигурные купола отлично противостоят сильным ноябрьским обледенениям.'
+            fact: 'Шедевр русского зодчества XVI века состоит из 9 церквей на едином основании. Фигурные разноцветные купола имеют крутой профиль для быстрого схода снега и наледи.'
           }
         }
       },
@@ -562,64 +586,64 @@
           highlight: '#fbbf24'
         },
         dayparts: [
-          { name: 'Ночь', hours: '00:00–06:00', temp: '+3°', feels: '-1°', icon: 'rain', cond: 'Моросящий дождь', wind: '6.5 м/с', press: '754 мм', precipProb: '85%' },
-          { name: 'Утро', hours: '06:00–12:00', temp: '+4°', feels: '0°', icon: 'mist', cond: 'Балтийская сырость', wind: '7.0 м/с', press: '755 мм', precipProb: '80%' },
-          { name: 'День', hours: '12:00–18:00', temp: '+5°', feels: '+1°', icon: 'rain', cond: 'Пасмурно, дождь', wind: '6.8 м/с', press: '756 мм', precipProb: '75%' },
-          { name: 'Вечер', hours: '18:00–24:00', temp: '+3°', feels: '-1°', icon: 'sleet', cond: 'Дождь с крупой', wind: '6.2 м/с', press: '757 мм', precipProb: '70%' }
+          { name: 'Ночь', hours: '00:00–06:00', temp: '+3°', feels: '-1°', icon: 'rain', cond: 'Моросящий дождь', wind: '6.5 м/с', press: '750 мм', precipProb: '85%' },
+          { name: 'Утро', hours: '06:00–12:00', temp: '+4°', feels: '0°', icon: 'mist', cond: 'Балтийская морось, дымка', wind: '6.3 м/с', press: '751 мм', precipProb: '85%' },
+          { name: 'День', hours: '12:00–18:00', temp: '+4°', feels: '0°', icon: 'rain', cond: 'Морось, Нева +5°C', wind: '6.1 м/с', press: '752 мм', precipProb: '80%' },
+          { name: 'Вечер', hours: '18:00–24:00', temp: '+3°', feels: '-1°', icon: 'sleet', cond: 'Сырость, холодная морось', wind: '5.8 м/с', press: '753 мм', precipProb: '75%' }
         ],
         hours24: [
-          { hour: 0, temp: 3, feels: -1, icon: 'rain', cond: 'Моросящий дождь', prob: 85, wind: 6.5, dir: 'З', deg: 270, hum: 96, press: 754 },
-          { hour: 1, temp: 3, feels: -1, icon: 'rain', cond: 'Моросящий дождь', prob: 85, wind: 6.6, dir: 'З', deg: 270, hum: 96, press: 754 },
-          { hour: 2, temp: 3, feels: -1, icon: 'rain', cond: 'Мелкий дождь', prob: 85, wind: 6.7, dir: 'З', deg: 270, hum: 97, press: 754 },
-          { hour: 3, temp: 2, feels: -2, icon: 'rain', cond: 'Холодная морось', prob: 85, wind: 6.8, dir: 'З', deg: 270, hum: 97, press: 754 },
-          { hour: 4, temp: 2, feels: -2, icon: 'mist', cond: 'Густой туман над Невой', prob: 80, wind: 6.9, dir: 'З', deg: 270, hum: 98, press: 755 },
-          { hour: 5, temp: 3, feels: -1, icon: 'mist', cond: 'Туман, сырость', prob: 80, wind: 7.0, dir: 'З', deg: 270, hum: 98, press: 755 },
-          { hour: 6, temp: 3, feels: -1, icon: 'mist', cond: 'Балтийская сырость', prob: 80, wind: 7.0, dir: 'З', deg: 270, hum: 98, press: 755 },
-          { hour: 7, temp: 4, feels: 0, icon: 'rain', cond: 'Морось на набережных', prob: 80, wind: 7.1, dir: 'З', deg: 270, hum: 96, press: 755 },
-          { hour: 8, temp: 4, feels: 0, icon: 'rain', cond: 'Пасмурно, дождь', prob: 80, wind: 7.2, dir: 'З', deg: 270, hum: 95, press: 755 },
-          { hour: 9, temp: 4, feels: 0, icon: 'rain', cond: 'Пасмурно, дождь', prob: 80, wind: 7.1, dir: 'З', deg: 270, hum: 95, press: 755 },
-          { hour: 10, temp: 5, feels: +1, icon: 'rain', cond: 'Дождь, порывы с залива', prob: 75, wind: 7.0, dir: 'З', deg: 270, hum: 94, press: 756 },
-          { hour: 11, temp: 5, feels: +1, icon: 'rain', cond: 'Дождь, сырость', prob: 75, wind: 6.9, dir: 'З', deg: 270, hum: 94, press: 756 },
-          { hour: 12, temp: 5, feels: +1, icon: 'rain', cond: 'Пасмурно, дождь', prob: 75, wind: 6.8, dir: 'З', deg: 270, hum: 93, press: 756 },
-          { hour: 13, temp: 5, feels: +1, icon: 'overcast', cond: 'Плотные тучи над заливом', prob: 75, wind: 6.7, dir: 'З', deg: 270, hum: 93, press: 756 },
-          { hour: 14, temp: 4, feels: 0, icon: 'rain', cond: 'Балтийский дождь', prob: 75, wind: 6.8, dir: 'З', deg: 270, hum: 94, press: 756 },
-          { hour: 15, temp: 4, feels: 0, icon: 'rain', cond: 'Морось, ветер с Невы', prob: 75, wind: 6.7, dir: 'З', deg: 270, hum: 95, press: 756 },
-          { hour: 16, temp: 4, feels: 0, icon: 'mist', cond: 'Сумерки, опускается туман', prob: 70, wind: 6.5, dir: 'СЗ', deg: 315, hum: 96, press: 757 },
-          { hour: 17, temp: 3, feels: -1, icon: 'sleet', cond: 'Дождь с ледяной крупой', prob: 70, wind: 6.4, dir: 'СЗ', deg: 315, hum: 96, press: 757 },
-          { hour: 18, temp: 3, feels: -1, icon: 'sleet', cond: 'Дождь со снегом', prob: 70, wind: 6.2, dir: 'СЗ', deg: 315, hum: 96, press: 757 },
-          { hour: 19, temp: 3, feels: -1, icon: 'sleet', cond: 'Сырость, промозглый ветер', prob: 70, wind: 6.1, dir: 'СЗ', deg: 315, hum: 96, press: 757 },
-          { hour: 20, temp: 2, feels: -2, icon: 'rain-snow', cond: 'Мокрый снег', prob: 75, wind: 6.0, dir: 'СЗ', deg: 315, hum: 97, press: 757 },
-          { hour: 21, temp: 2, feels: -2, icon: 'rain-snow', cond: 'Мокрый снег', prob: 75, wind: 5.9, dir: 'СЗ', deg: 315, hum: 97, press: 757 },
-          { hour: 22, temp: 2, feels: -2, icon: 'mist', cond: 'Замерзающая морось', prob: 65, wind: 5.8, dir: 'СЗ', deg: 315, hum: 98, press: 758 },
-          { hour: 23, temp: 1, feels: -3, icon: 'sleet', cond: 'Гололедица, крупа', prob: 65, wind: 5.8, dir: 'СЗ', deg: 315, hum: 98, press: 758 }
+          { hour: 0, temp: 3, feels: -1, icon: 'rain', cond: 'Моросящий дождь', prob: 85, wind: 6.5, dir: 'ЮЗ', deg: 225, hum: 95, press: 750 },
+          { hour: 1, temp: 3, feels: -1, icon: 'rain', cond: 'Моросящий дождь', prob: 85, wind: 6.5, dir: 'ЮЗ', deg: 225, hum: 95, press: 750 },
+          { hour: 2, temp: 3, feels: -1, icon: 'rain', cond: 'Мелкий дождь', prob: 85, wind: 6.4, dir: 'ЮЗ', deg: 225, hum: 96, press: 751 },
+          { hour: 3, temp: 3, feels: -1, icon: 'rain', cond: 'Холодная морось', prob: 85, wind: 6.4, dir: 'ЮЗ', deg: 225, hum: 96, press: 751 },
+          { hour: 4, temp: 3, feels: -1, icon: 'mist', cond: 'Густой туман над Невой', prob: 80, wind: 6.3, dir: 'ЮЗ', deg: 225, hum: 97, press: 751 },
+          { hour: 5, temp: 3, feels: -1, icon: 'mist', cond: 'Туман, сырость', prob: 80, wind: 6.3, dir: 'ЮЗ', deg: 225, hum: 97, press: 751 },
+          { hour: 6, temp: 4, feels: 0, icon: 'mist', cond: 'Балтийская морось', prob: 85, wind: 6.3, dir: 'ЮЗ', deg: 225, hum: 95, press: 751 },
+          { hour: 7, temp: 4, feels: 0, icon: 'rain', cond: 'Морось на набережных', prob: 85, wind: 6.2, dir: 'ЮЗ', deg: 225, hum: 94, press: 752 },
+          { hour: 8, temp: 4, feels: 0, icon: 'rain', cond: 'Пасмурно, морось', prob: 80, wind: 6.2, dir: 'ЮЗ', deg: 225, hum: 93, press: 752 },
+          { hour: 9, temp: 4, feels: 0, icon: 'rain', cond: 'Пасмурно, морось', prob: 80, wind: 6.2, dir: 'ЮЗ', deg: 225, hum: 93, press: 752 },
+          { hour: 10, temp: 4, feels: 0, icon: 'rain', cond: 'Морось, ветер с залива', prob: 80, wind: 6.1, dir: 'ЮЗ', deg: 225, hum: 92, press: 752 },
+          { hour: 11, temp: 4, feels: 0, icon: 'rain', cond: 'Морось, сырость', prob: 80, wind: 6.1, dir: 'ЮЗ', deg: 225, hum: 92, press: 752 },
+          { hour: 12, temp: 4, feels: 0, icon: 'rain', cond: 'Морось, Нева +5°C', prob: 80, wind: 6.1, dir: 'ЮЗ', deg: 225, hum: 92, press: 752 },
+          { hour: 13, temp: 5, feels: +1, icon: 'overcast', cond: 'Плотные тучи над заливом', prob: 75, wind: 6.0, dir: 'ЮЗ', deg: 225, hum: 91, press: 752 },
+          { hour: 14, temp: 5, feels: +1, icon: 'rain', cond: 'Балтийская морось', prob: 75, wind: 6.0, dir: 'ЮЗ', deg: 225, hum: 92, press: 753 },
+          { hour: 15, temp: 4, feels: 0, icon: 'rain', cond: 'Морось, свежий бриз', prob: 75, wind: 5.9, dir: 'ЮЗ', deg: 225, hum: 93, press: 753 },
+          { hour: 16, temp: 4, feels: 0, icon: 'mist', cond: 'Сумерки, опускается туман', prob: 75, wind: 5.8, dir: 'ЮЗ', deg: 225, hum: 94, press: 753 },
+          { hour: 17, temp: 3, feels: -1, icon: 'sleet', cond: 'Дождь со снегом', prob: 75, wind: 5.8, dir: 'ЮЗ', deg: 225, hum: 95, press: 753 },
+          { hour: 18, temp: 3, feels: -1, icon: 'sleet', cond: 'Холодная морось', prob: 75, wind: 5.8, dir: 'ЮЗ', deg: 225, hum: 95, press: 753 },
+          { hour: 19, temp: 3, feels: -1, icon: 'sleet', cond: 'Сырость, промозглый ветер', prob: 70, wind: 5.7, dir: 'ЮЗ', deg: 225, hum: 96, press: 753 },
+          { hour: 20, temp: 3, feels: -1, icon: 'rain-snow', cond: 'Морось с крупой', prob: 70, wind: 5.6, dir: 'ЮЗ', deg: 225, hum: 96, press: 754 },
+          { hour: 21, temp: 2, feels: -2, icon: 'rain-snow', cond: 'Мокрый снег', prob: 70, wind: 5.5, dir: 'З', deg: 270, hum: 97, press: 754 },
+          { hour: 22, temp: 2, feels: -2, icon: 'mist', cond: 'Замерзающая морось', prob: 65, wind: 5.5, dir: 'З', deg: 270, hum: 97, press: 754 },
+          { hour: 23, temp: 2, feels: -2, icon: 'sleet', cond: 'Гололедица на мостах', prob: 65, wind: 5.4, dir: 'З', deg: 270, hum: 98, press: 754 }
         ],
         landmarks: {
           palace_bridge: {
             title: 'Дворцовый мост',
             type: 'Разводной мост через Большую Неву',
             height: 'Длина: 260 м, разводной пролёт 56.5 м',
-            temp: '+3.2°C (на уровне проезжей части)',
-            wind: '10.2 м/с (порывы ветра с Финского залива)',
-            visibility: '4 км (морская дымка)',
-            fact: 'Каждое крыло моста весит около 700 тонн. 1 ноября сезон регулярной навигации завершается, и холодный балтийский нагон воды часто создает повышенный уровень Невы.'
+            temp: '+3.5°C (на уровне проезжей части)',
+            wind: '10.8 м/с (порывы ветра с Финского залива)',
+            visibility: '4.5 км (морская сырая дымка)',
+            fact: 'Каждое разводное крыло моста весит около 700 тонн. 1 ноября сезон регулярной навигации по Неве подходит к завершению, а температура воды в реке держится около +5°C.'
           },
           peter_paul: {
             title: 'Петропавловский собор',
             type: 'Исторический форт и усыпальница императоров',
             height: 'Высота: 122.5 м (золотой шпиль)',
-            temp: '+0.5°C (на уровне золотого Ангела)',
-            wind: '12.4 м/с',
+            temp: '+1.2°C (на уровне золотого Ангела)',
+            wind: '12.8 м/с',
             visibility: '5 км',
-            fact: 'Золотой шпиль с фигурой парящего ангела с крестом уходит прямо в низкую балтийскую облачность. Это самый высокий архитектурный ориентир исторического центра Петербурга.'
+            fact: 'Шпиль Петропавловского собора увенчан фигурой парящего ангела с крестом, который служит главным флюгером Заячьего острова и историческим ориентиром города.'
           },
           isaac: {
             title: 'Исаакиевский собор',
             type: 'Крупнейший православный храм Петербурга',
             height: 'Высота: 101.5 м',
-            temp: '+1.8°C (на Колоннаде)',
-            wind: '9.8 м/с',
+            temp: '+2.1°C (на смотровой Колоннаде, 43м)',
+            wind: '9.5 м/с',
             visibility: '6 км',
-            fact: 'На колоннаде собора (высота 43 м) расположена смотровая площадка, откуда открывается круговая панорама Невы, окутанная ноябрьским сырым туманом.'
+            fact: 'С колоннады собора открывается панорама Сенатской площади, Адмиралтейства и Невы, сегодня укутанных характерной для Балтики осенней пеленой.'
           }
         }
       },
@@ -639,64 +663,64 @@
           highlight: '#ef4444'
         },
         dayparts: [
-          { name: 'Ночь', hours: '00:00–06:00', temp: '-5°', feels: '-10°', icon: 'snow', cond: 'Снежные заряды', wind: '4.8 м/с', press: '752 мм', precipProb: '90%' },
-          { name: 'Утро', hours: '06:00–12:00', temp: '-3°', feels: '-8°', icon: 'snow', cond: 'Умеренный снегопад', wind: '4.2 м/с', press: '753 мм', precipProb: '85%' },
-          { name: 'День', hours: '12:00–18:00', temp: '-1°', feels: '-5°', icon: 'snow', cond: 'Снег, метель', wind: '4.5 м/с', press: '754 мм', precipProb: '80%' },
-          { name: 'Вечер', hours: '18:00–24:00', temp: '-3°', feels: '-7°', icon: 'snow', cond: 'Снегопад, заносы', wind: '4.0 м/с', press: '755 мм', precipProb: '75%' }
+          { name: 'Ночь', hours: '00:00–06:00', temp: '-5°', feels: '-10°', icon: 'snow', cond: 'Снежные заряды', wind: '4.2 м/с', press: '758 мм', precipProb: '85%' },
+          { name: 'Утро', hours: '06:00–12:00', temp: '-3°', feels: '-7°', icon: 'snow', cond: 'Умеренный снегопад', wind: '4.0 м/с', press: '759 мм', precipProb: '85%' },
+          { name: 'День', hours: '12:00–18:00', temp: '-2°', feels: '-6°', icon: 'snow', cond: 'Сибирский снегопад', wind: '3.8 м/с', press: '760 мм', precipProb: '80%' },
+          { name: 'Вечер', hours: '18:00–24:00', temp: '-4°', feels: '-8°', icon: 'snow', cond: 'Снегопад, заносы', wind: '3.5 м/с', press: '761 мм', precipProb: '75%' }
         ],
         hours24: [
-          { hour: 0, temp: -5, feels: -10, icon: 'snow', cond: 'Снегопад, позёмка', prob: 90, wind: 4.8, dir: 'СЗ', deg: 315, hum: 85, press: 752 },
-          { hour: 1, temp: -5, feels: -10, icon: 'snow', cond: 'Снегопад', prob: 90, wind: 4.7, dir: 'СЗ', deg: 315, hum: 85, press: 752 },
-          { hour: 2, temp: -6, feels: -11, icon: 'snow', cond: 'Метель', prob: 90, wind: 4.9, dir: 'СЗ', deg: 315, hum: 86, press: 752 },
-          { hour: 3, temp: -6, feels: -11, icon: 'snow', cond: 'Метель над Обью', prob: 90, wind: 5.0, dir: 'СЗ', deg: 315, hum: 86, press: 752 },
-          { hour: 4, temp: -5, feels: -10, icon: 'snow', cond: 'Снегопад', prob: 85, wind: 4.6, dir: 'СЗ', deg: 315, hum: 85, press: 753 },
-          { hour: 5, temp: -4, feels: -9, icon: 'snow', cond: 'Снежные хлопья', prob: 85, wind: 4.4, dir: 'СЗ', deg: 315, hum: 85, press: 753 },
-          { hour: 6, temp: -4, feels: -9, icon: 'snow', cond: 'Снегопад', prob: 85, wind: 4.3, dir: 'СЗ', deg: 315, hum: 84, press: 753 },
-          { hour: 7, temp: -3, feels: -8, icon: 'snow', cond: 'Утренний снегопад', prob: 85, wind: 4.2, dir: 'СЗ', deg: 315, hum: 84, press: 753 },
-          { hour: 8, temp: -3, feels: -8, icon: 'snow', cond: 'Снег', prob: 80, wind: 4.2, dir: 'СЗ', deg: 315, hum: 83, press: 753 },
-          { hour: 9, temp: -2, feels: -6, icon: 'snow', cond: 'Снег, дымка', prob: 80, wind: 4.4, dir: 'СЗ', deg: 315, hum: 82, press: 754 },
-          { hour: 10, temp: -2, feels: -6, icon: 'snow', cond: 'Умеренный снег', prob: 80, wind: 4.5, dir: 'З', deg: 270, hum: 82, press: 754 },
-          { hour: 11, temp: -1, feels: -5, icon: 'snow', cond: 'Снегопад', prob: 80, wind: 4.5, dir: 'З', deg: 270, hum: 81, press: 754 },
-          { hour: 12, temp: -1, feels: -5, icon: 'snow', cond: 'Снегопад, метель', prob: 80, wind: 4.6, dir: 'З', deg: 270, hum: 80, press: 754 },
-          { hour: 13, temp: -1, feels: -5, icon: 'snow', cond: 'Снег', prob: 80, wind: 4.6, dir: 'З', deg: 270, hum: 80, press: 754 },
-          { hour: 14, temp: -2, feels: -6, icon: 'snow', cond: 'Снегопад', prob: 80, wind: 4.5, dir: 'З', deg: 270, hum: 81, press: 754 },
-          { hour: 15, temp: -2, feels: -6, icon: 'snow', cond: 'Снегопад', prob: 80, wind: 4.4, dir: 'З', deg: 270, hum: 82, press: 754 },
-          { hour: 16, temp: -2, feels: -6, icon: 'snow', cond: 'Снег в сумерках', prob: 75, wind: 4.2, dir: 'З', deg: 270, hum: 83, press: 755 },
-          { hour: 17, temp: -3, feels: -7, icon: 'snow', cond: 'Снежные заряды', prob: 75, wind: 4.1, dir: 'СЗ', deg: 315, hum: 84, press: 755 },
-          { hour: 18, temp: -3, feels: -7, icon: 'snow', cond: 'Снегопад, заносы', prob: 75, wind: 4.0, dir: 'СЗ', deg: 315, hum: 85, press: 755 },
-          { hour: 19, temp: -3, feels: -7, icon: 'snow', cond: 'Снежная крупа', prob: 75, wind: 4.0, dir: 'СЗ', deg: 315, hum: 85, press: 755 },
-          { hour: 20, temp: -4, feels: -8, icon: 'snow', cond: 'Снегопад', prob: 70, wind: 3.9, dir: 'СЗ', deg: 315, hum: 86, press: 755 },
-          { hour: 21, temp: -4, feels: -8, icon: 'snow', cond: 'Снег', prob: 70, wind: 3.8, dir: 'СЗ', deg: 315, hum: 86, press: 755 },
-          { hour: 22, temp: -5, feels: -9, icon: 'snow', cond: 'Морозный снег', prob: 70, wind: 3.7, dir: 'СЗ', deg: 315, hum: 87, press: 756 },
-          { hour: 23, temp: -5, feels: -10, icon: 'snow', cond: 'Снег, гололёд', prob: 70, wind: 3.8, dir: 'СЗ', deg: 315, hum: 87, press: 756 }
+          { hour: 0, temp: -5, feels: -10, icon: 'snow', cond: 'Снегопад, позёмка', prob: 85, wind: 4.2, dir: 'С', deg: 0, hum: 84, press: 758 },
+          { hour: 1, temp: -5, feels: -10, icon: 'snow', cond: 'Снегопад', prob: 85, wind: 4.2, dir: 'С', deg: 0, hum: 84, press: 758 },
+          { hour: 2, temp: -6, feels: -11, icon: 'snow', cond: 'Метель над Обью', prob: 85, wind: 4.3, dir: 'С', deg: 0, hum: 85, press: 758 },
+          { hour: 3, temp: -6, feels: -11, icon: 'snow', cond: 'Метель', prob: 85, wind: 4.3, dir: 'С', deg: 0, hum: 85, press: 758 },
+          { hour: 4, temp: -5, feels: -10, icon: 'snow', cond: 'Снегопад', prob: 85, wind: 4.1, dir: 'С', deg: 0, hum: 84, press: 759 },
+          { hour: 5, temp: -4, feels: -8, icon: 'snow', cond: 'Снежные хлопья', prob: 85, wind: 4.1, dir: 'С', deg: 0, hum: 84, press: 759 },
+          { hour: 6, temp: -4, feels: -8, icon: 'snow', cond: 'Снегопад', prob: 85, wind: 4.0, dir: 'С', deg: 0, hum: 83, press: 759 },
+          { hour: 7, temp: -3, feels: -7, icon: 'snow', cond: 'Утренний снег', prob: 85, wind: 4.0, dir: 'С', deg: 0, hum: 83, press: 759 },
+          { hour: 8, temp: -3, feels: -7, icon: 'snow', cond: 'Снегопад', prob: 85, wind: 3.9, dir: 'С', deg: 0, hum: 82, press: 759 },
+          { hour: 9, temp: -3, feels: -7, icon: 'snow', cond: 'Снегопад, дымка', prob: 85, wind: 3.9, dir: 'С', deg: 0, hum: 82, press: 760 },
+          { hour: 10, temp: -2, feels: -6, icon: 'snow', cond: 'Умеренный снегопад', prob: 80, wind: 3.8, dir: 'С', deg: 0, hum: 81, press: 760 },
+          { hour: 11, temp: -2, feels: -6, icon: 'snow', cond: 'Сибирский снегопад', prob: 80, wind: 3.8, dir: 'С', deg: 0, hum: 81, press: 760 },
+          { hour: 12, temp: -2, feels: -6, icon: 'snow', cond: 'Сибирский снегопад', prob: 80, wind: 3.8, dir: 'С', deg: 0, hum: 81, press: 760 },
+          { hour: 13, temp: -2, feels: -6, icon: 'snow', cond: 'Снегопад', prob: 80, wind: 3.8, dir: 'С', deg: 0, hum: 80, press: 760 },
+          { hour: 14, temp: -2, feels: -6, icon: 'snow', cond: 'Снегопад', prob: 80, wind: 3.7, dir: 'С', deg: 0, hum: 81, press: 760 },
+          { hour: 15, temp: -3, feels: -7, icon: 'snow', cond: 'Снегопад', prob: 80, wind: 3.7, dir: 'С', deg: 0, hum: 82, press: 760 },
+          { hour: 16, temp: -3, feels: -7, icon: 'snow', cond: 'Снег в сумерках', prob: 75, wind: 3.6, dir: 'С', deg: 0, hum: 83, press: 761 },
+          { hour: 17, temp: -3, feels: -7, icon: 'snow', cond: 'Снежные заряды', prob: 75, wind: 3.6, dir: 'С', deg: 0, hum: 83, press: 761 },
+          { hour: 18, temp: -4, feels: -8, icon: 'snow', cond: 'Снегопад, заносы', prob: 75, wind: 3.5, dir: 'С', deg: 0, hum: 84, press: 761 },
+          { hour: 19, temp: -4, feels: -8, icon: 'snow', cond: 'Снежная крупа', prob: 75, wind: 3.5, dir: 'С', deg: 0, hum: 84, press: 761 },
+          { hour: 20, temp: -4, feels: -8, icon: 'snow', cond: 'Снегопад', prob: 75, wind: 3.4, dir: 'С', deg: 0, hum: 85, press: 761 },
+          { hour: 21, temp: -5, feels: -9, icon: 'snow', cond: 'Снег, метель', prob: 70, wind: 3.4, dir: 'С', deg: 0, hum: 85, press: 761 },
+          { hour: 22, temp: -5, feels: -9, icon: 'snow', cond: 'Морозный снег', prob: 70, wind: 3.3, dir: 'С', deg: 0, hum: 86, press: 762 },
+          { hour: 23, temp: -6, feels: -10, icon: 'snow', cond: 'Снег, гололедица', prob: 70, wind: 3.3, dir: 'С', deg: 0, hum: 86, press: 762 }
         ],
         landmarks: {
           bugrinsky: {
             title: 'Бугринский мост',
             type: 'Арочный мост через реку Обь',
             height: 'Высота арки: 70 м, пролёт 380 м',
-            temp: '-2.8°C (над ледяной рекой Обь)',
-            wind: '9.2 м/с (порывы ветра вдоль русла)',
+            temp: '-3.2°C (над руслом Оби)',
+            wind: '7.8 м/с (северный бриз вдоль реки)',
             visibility: '5 км',
-            fact: 'Самый большой сетчатый арочный пролет в России и СНГ (380 м). Алая стальная арка ярко контрастирует со снегопадами начала ноября и первыми ледяными заберегами на реке Обь.'
+            fact: 'Самый большой сетчатый арочный пролет в СНГ (380 м). Алая стальная арка моста ярко выделяется на фоне белого сибирского снега и первых ледовых заберегов.'
           },
           novat: {
             title: 'Театр оперы и балета (НОВАТ)',
             type: 'Крупнейшее театральное здание России',
             height: 'Высота купола: 35 м (диаметр 60 м)',
-            temp: '-1.8°C',
-            wind: '4.5 м/с',
+            temp: '-2.1°C',
+            wind: '4.0 м/с',
             visibility: '6 км',
-            fact: 'Купол театра толщиной всего 8 см перекрывает гигантское пространство без промежуточных колонн. Его уникальная чешуйчатая серебристая кровля 1 ноября покрыта плотным сибирским снегом.'
+            fact: 'Купол театра толщиной всего 8 см перекрывает гигантское пространство зрительного зала без опор. Уникальная серебристая чешуйчатая кровля укрыта свежим ноябрьским снегом.'
           },
           siberian_pines: {
             title: 'Сибирские сосновые боры',
             type: 'Хвойный массив Приобья',
             height: 'Высота крон: до 28 м',
-            temp: '-2.1°C',
-            wind: '3.1 м/с (в лесопарке)',
+            temp: '-2.4°C',
+            wind: '2.8 м/с (в глубине лесопарка)',
             visibility: '6 км',
-            fact: 'Знаменитый реликтовый Заельцовский и Кудряшовский боры формируют экологический щит мегаполиса, задерживая снежные массы и обогащая сибирский воздух хвоей.'
+            fact: 'Реликтовые Заельцовский и Кудряшовский боры задерживают снеговые облака и формируют чистейший микроклимат с ароматом хвои.'
           }
         }
       },
@@ -716,64 +740,64 @@
           highlight: '#34d399'
         },
         dayparts: [
-          { name: 'Ночь', hours: '00:00–06:00', temp: '-3°', feels: '-8°', icon: 'sleet', cond: 'Снежная крупа', wind: '5.2 м/с', press: '745 мм', precipProb: '65%' },
-          { name: 'Утро', hours: '06:00–12:00', temp: '-1°', feels: '-5°', icon: 'overcast', cond: 'Пасмурно, изморозь', wind: '5.0 м/с', press: '746 мм', precipProb: '60%' },
-          { name: 'День', hours: '12:00–18:00', temp: '+1°', feels: '-3°', icon: 'sleet', cond: 'Облачно с прояснениями', wind: '4.8 м/с', press: '747 мм', precipProb: '55%' },
-          { name: 'Вечер', hours: '18:00–24:00', temp: '-1°', feels: '-6°', icon: 'snow', cond: 'Ледяной налёт', wind: '4.5 м/с', press: '748 мм', precipProb: '60%' }
+          { name: 'Ночь', hours: '00:00–06:00', temp: '-3°', feels: '-7°', icon: 'sleet', cond: 'Снежная крупа', wind: '4.4 м/с', press: '749 мм', precipProb: '60%' },
+          { name: 'Утро', hours: '06:00–12:00', temp: '-2°', feels: '-6°', icon: 'overcast', cond: 'Пасмурно, дымка', wind: '4.2 м/с', press: '750 мм', precipProb: '55%' },
+          { name: 'День', hours: '12:00–18:00', temp: '-1°', feels: '-5°', icon: 'sleet', cond: 'Облачно с прояснениями', wind: '4.0 м/с', press: '750 мм', precipProb: '50%' },
+          { name: 'Вечер', hours: '18:00–24:00', temp: '-2°', feels: '-6°', icon: 'snow', cond: 'Ледяной налёт', wind: '3.8 м/с', press: '751 мм', precipProb: '55%' }
         ],
         hours24: [
-          { hour: 0, temp: -3, feels: -8, icon: 'sleet', cond: 'Снежная крупа', prob: 65, wind: 5.2, dir: 'З', deg: 270, hum: 84, press: 745 },
-          { hour: 1, temp: -3, feels: -8, icon: 'sleet', cond: 'Снежная крупа', prob: 65, wind: 5.1, dir: 'З', deg: 270, hum: 84, press: 745 },
-          { hour: 2, temp: -4, feels: -9, icon: 'snow', cond: 'Замерзающая изморозь', prob: 65, wind: 5.3, dir: 'З', deg: 270, hum: 85, press: 745 },
-          { hour: 3, temp: -4, feels: -9, icon: 'snow', cond: 'Ледяной налёт', prob: 65, wind: 5.2, dir: 'З', deg: 270, hum: 85, press: 745 },
-          { hour: 4, temp: -3, feels: -8, icon: 'overcast', cond: 'Пасмурно, дымка', prob: 60, wind: 5.1, dir: 'З', deg: 270, hum: 84, press: 746 },
-          { hour: 5, temp: -2, feels: -7, icon: 'overcast', cond: 'Пасмурно, изморозь', prob: 60, wind: 5.0, dir: 'З', deg: 270, hum: 84, press: 746 },
-          { hour: 6, temp: -2, feels: -6, icon: 'overcast', cond: 'Пасмурно, изморозь', prob: 60, wind: 5.0, dir: 'З', deg: 270, hum: 83, press: 746 },
-          { hour: 7, temp: -1, feels: -5, icon: 'overcast', cond: 'Пасмурно', prob: 60, wind: 4.9, dir: 'З', deg: 270, hum: 82, press: 746 },
-          { hour: 8, temp: -1, feels: -5, icon: 'overcast', cond: 'Пасмурно', prob: 60, wind: 4.9, dir: 'З', deg: 270, hum: 81, press: 746 },
-          { hour: 9, temp: 0, feels: -4, icon: 'overcast', cond: 'Облачно', prob: 55, wind: 4.8, dir: 'З', deg: 270, hum: 80, press: 747 },
-          { hour: 10, temp: 0, feels: -4, icon: 'overcast', cond: 'Облачно с прояснениями', prob: 55, wind: 4.8, dir: 'З', deg: 270, hum: 79, press: 747 },
-          { hour: 11, temp: +1, feels: -3, icon: 'sleet', cond: 'Слабый снег с дождём', prob: 55, wind: 4.8, dir: 'З', deg: 270, hum: 78, press: 747 },
-          { hour: 12, temp: +1, feels: -3, icon: 'sleet', cond: 'Облачно с прояснениями', prob: 55, wind: 4.8, dir: 'З', deg: 270, hum: 78, press: 747 },
-          { hour: 13, temp: +1, feels: -3, icon: 'sleet', cond: 'Слякоть', prob: 55, wind: 4.7, dir: 'З', deg: 270, hum: 79, press: 747 },
-          { hour: 14, temp: -1, feels: -5, icon: 'sleet', cond: 'Облачно, снежная крупа', prob: 55, wind: 4.8, dir: 'З', deg: 270, hum: 80, press: 747 },
-          { hour: 15, temp: -1, feels: -5, icon: 'sleet', cond: 'Снежная крупа', prob: 60, wind: 4.7, dir: 'З', deg: 270, hum: 81, press: 747 },
-          { hour: 16, temp: -1, feels: -5, icon: 'overcast', cond: 'Пасмурно, сумерки', prob: 60, wind: 4.6, dir: 'З', deg: 270, hum: 82, press: 748 },
-          { hour: 17, temp: -1, feels: -6, icon: 'snow', cond: 'Ледяной налёт', prob: 60, wind: 4.5, dir: 'СЗ', deg: 315, hum: 83, press: 748 },
-          { hour: 18, temp: -1, feels: -6, icon: 'snow', cond: 'Ледяной налёт', prob: 60, wind: 4.5, dir: 'СЗ', deg: 315, hum: 83, press: 748 },
-          { hour: 19, temp: -2, feels: -7, icon: 'snow', cond: 'Снежная морось', prob: 60, wind: 4.4, dir: 'СЗ', deg: 315, hum: 84, press: 748 },
-          { hour: 20, temp: -2, feels: -7, icon: 'snow', cond: 'Гололедица', prob: 60, wind: 4.3, dir: 'СЗ', deg: 315, hum: 84, press: 748 },
-          { hour: 21, temp: -2, feels: -7, icon: 'snow', cond: 'Гололедица', prob: 65, wind: 4.2, dir: 'СЗ', deg: 315, hum: 85, press: 748 },
-          { hour: 22, temp: -3, feels: -8, icon: 'snow', cond: 'Снежная крупа', prob: 65, wind: 4.2, dir: 'СЗ', deg: 315, hum: 85, press: 749 },
-          { hour: 23, temp: -3, feels: -8, icon: 'snow', cond: 'Замерзающий снег', prob: 65, wind: 4.1, dir: 'СЗ', deg: 315, hum: 85, press: 749 }
+          { hour: 0, temp: -3, feels: -7, icon: 'sleet', cond: 'Снежная крупа', prob: 60, wind: 4.4, dir: 'З', deg: 270, hum: 82, press: 749 },
+          { hour: 1, temp: -3, feels: -7, icon: 'sleet', cond: 'Снежная крупа', prob: 60, wind: 4.3, dir: 'З', deg: 270, hum: 82, press: 749 },
+          { hour: 2, temp: -4, feels: -8, icon: 'snow', cond: 'Замерзающая изморозь', prob: 60, wind: 4.4, dir: 'З', deg: 270, hum: 83, press: 749 },
+          { hour: 3, temp: -4, feels: -8, icon: 'snow', cond: 'Ледяной налёт', prob: 60, wind: 4.3, dir: 'З', deg: 270, hum: 83, press: 749 },
+          { hour: 4, temp: -3, feels: -7, icon: 'overcast', cond: 'Пасмурно, дымка', prob: 55, wind: 4.2, dir: 'З', deg: 270, hum: 82, press: 750 },
+          { hour: 5, temp: -2, feels: -6, icon: 'overcast', cond: 'Пасмурно, изморозь', prob: 55, wind: 4.2, dir: 'З', deg: 270, hum: 82, press: 750 },
+          { hour: 6, temp: -2, feels: -6, icon: 'overcast', cond: 'Пасмурно, изморозь', prob: 55, wind: 4.2, dir: 'З', deg: 270, hum: 81, press: 750 },
+          { hour: 7, temp: -2, feels: -6, icon: 'overcast', cond: 'Пасмурно, дымка', prob: 55, wind: 4.1, dir: 'З', deg: 270, hum: 80, press: 750 },
+          { hour: 8, temp: -1, feels: -5, icon: 'overcast', cond: 'Пасмурно', prob: 55, wind: 4.1, dir: 'З', deg: 270, hum: 80, press: 750 },
+          { hour: 9, temp: -1, feels: -5, icon: 'overcast', cond: 'Облачно', prob: 50, wind: 4.0, dir: 'З', deg: 270, hum: 79, press: 750 },
+          { hour: 10, temp: -1, feels: -5, icon: 'overcast', cond: 'Облачно с прояснениями', prob: 50, wind: 4.0, dir: 'З', deg: 270, hum: 79, press: 750 },
+          { hour: 11, temp: -1, feels: -5, icon: 'sleet', cond: 'Облачно, снежная крупа', prob: 50, wind: 4.0, dir: 'З', deg: 270, hum: 79, press: 750 },
+          { hour: 12, temp: -1, feels: -5, icon: 'sleet', cond: 'Переменная облачность', prob: 50, wind: 4.0, dir: 'З', deg: 270, hum: 79, press: 750 },
+          { hour: 13, temp: 0, feels: -4, icon: 'overcast', cond: 'Облачно с прояснениями', prob: 50, wind: 4.0, dir: 'З', deg: 270, hum: 78, press: 750 },
+          { hour: 14, temp: 0, feels: -4, icon: 'sleet', cond: 'Облачно, снежная крупа', prob: 50, wind: 3.9, dir: 'З', deg: 270, hum: 78, press: 750 },
+          { hour: 15, temp: -1, feels: -5, icon: 'sleet', cond: 'Снежная крупа', prob: 55, wind: 3.9, dir: 'З', deg: 270, hum: 80, press: 750 },
+          { hour: 16, temp: -1, feels: -5, icon: 'overcast', cond: 'Пасмурно, сумерки', prob: 55, wind: 3.8, dir: 'З', deg: 270, hum: 81, press: 751 },
+          { hour: 17, temp: -1, feels: -5, icon: 'snow', cond: 'Ледяной налёт', prob: 55, wind: 3.8, dir: 'З', deg: 270, hum: 82, press: 751 },
+          { hour: 18, temp: -2, feels: -6, icon: 'snow', cond: 'Ледяной налёт', prob: 55, wind: 3.8, dir: 'З', deg: 270, hum: 82, press: 751 },
+          { hour: 19, temp: -2, feels: -6, icon: 'snow', cond: 'Снежная морось', prob: 55, wind: 3.7, dir: 'З', deg: 270, hum: 83, press: 751 },
+          { hour: 20, temp: -2, feels: -6, icon: 'snow', cond: 'Гололедица', prob: 55, wind: 3.7, dir: 'З', deg: 270, hum: 83, press: 751 },
+          { hour: 21, temp: -3, feels: -7, icon: 'snow', cond: 'Гололедица', prob: 60, wind: 3.6, dir: 'З', deg: 270, hum: 84, press: 751 },
+          { hour: 22, temp: -3, feels: -7, icon: 'snow', cond: 'Снежная крупа', prob: 60, wind: 3.6, dir: 'З', deg: 270, hum: 84, press: 752 },
+          { hour: 23, temp: -3, feels: -7, icon: 'snow', cond: 'Замерзающий снег', prob: 60, wind: 3.5, dir: 'З', deg: 270, hum: 85, press: 752 }
         ],
         landmarks: {
           iset_tower: {
             title: 'Башня «Исеть»',
             type: 'Самый северный 52-этажный небоскрёб',
             height: 'Высота: 209 м',
-            temp: '-3.8°C (на верхних ярусах)',
-            wind: '12.6 м/с (уральские ветра)',
-            visibility: '7 км',
-            fact: 'Стеклянный спиралевидный фасад башни имеет специальный энергосберегающий коэффициент. 1 ноября на высоте 200 метров фиксируются устойчивые отрицательные температуры и порывистый ветер с Уральских гор.'
+            temp: '-3.2°C (на верхних ярусах)',
+            wind: '11.4 м/с (уральские ветра)',
+            visibility: '7.5 км',
+            fact: 'Стеклянный спиралевидный фасад небоскрёба имеет специальное теплосберегающее остекление. На высоте 200 метров ветер с Уральских хребтов дует почти непрерывно.'
           },
           vysotsky: {
             title: 'Небоскрёб «Высоцкий»',
             type: 'Бизнес-центр со смотровой площадкой',
             height: 'Высота: 188 м',
-            temp: '-3.2°C (открытая площадка на 52 этаже)',
-            wind: '11.8 м/с',
+            temp: '-2.8°C (открытая площадка на 52 этаже)',
+            wind: '10.5 м/с',
             visibility: '8 км',
-            fact: 'На открытой смотровой площадке на 52 этаже установлены ветрозащитные экраны. Отсюда открывается вид на весь Екатеринбург и гладь Городского пруда.'
+            fact: 'С открытой смотровой площадки открывается круговой обзор Екатеринбурга, Городского пруда и уральских лесов в радиусе до 25 километров.'
           },
           sevastyanov: {
             title: 'Дом Севастьянова',
             type: 'Дворец в стиле неоготики на Городском пруду',
             height: 'Памятник архитектуры XIX века',
-            temp: '+0.5°C (на набережной)',
-            wind: '4.5 м/с',
+            temp: '-0.8°C (на набережной)',
+            wind: '4.0 м/с',
             visibility: '8 км',
-            fact: 'Уникальное изумрудно-белое здание с кружевными готическими беседками и ротондой на берегу Городского пруда, архитектурный символ столицы Урала.'
+            fact: 'Изумрудно-белое здание с кружевными готическими беседками и ротондой на набережной Городского пруда — архитектурная визитная карточка Екатеринбурга.'
           }
         }
       },
@@ -793,71 +817,71 @@
           highlight: '#38bdf8'
         },
         dayparts: [
-          { name: 'Ночь', hours: '00:00–06:00', temp: '0°', feels: '-4°', icon: 'sleet', cond: 'Мокрый снег', wind: '4.0 м/с', press: '753 мм', precipProb: '75%' },
-          { name: 'Утро', hours: '06:00–12:00', temp: '+1°', feels: '-3°', icon: 'overcast', cond: 'Пасмурно, сыро', wind: '4.2 м/с', press: '754 мм', precipProb: '70%' },
-          { name: 'День', hours: '12:00–18:00', temp: '+2°', feels: '-1°', icon: 'sleet', cond: 'Слабый снег с дождём', wind: '4.5 м/с', press: '755 мм', precipProb: '65%' },
-          { name: 'Вечер', hours: '18:00–24:00', temp: '0°', feels: '-4°', icon: 'sleet', cond: 'Осадки, гололедица', wind: '3.8 м/с', press: '756 мм', precipProb: '60%' }
+          { name: 'Ночь', hours: '00:00–06:00', temp: '0°', feels: '-4°', icon: 'sleet', cond: 'Мокрый снег', wind: '4.2 м/с', press: '754 мм', precipProb: '70%' },
+          { name: 'Утро', hours: '06:00–12:00', temp: '+1°', feels: '-3°', icon: 'overcast', cond: 'Пасмурно, сыро', wind: '4.4 м/с', press: '755 мм', precipProb: '65%' },
+          { name: 'День', hours: '12:00–18:00', temp: '+2°', feels: '-2°', icon: 'sleet', cond: 'Пасмурно, сырость', wind: '4.5 м/с', press: '755 мм', precipProb: '60%' },
+          { name: 'Вечер', hours: '18:00–24:00', temp: '0°', feels: '-4°', icon: 'sleet', cond: 'Осадки, гололедица', wind: '4.0 м/с', press: '756 мм', precipProb: '60%' }
         ],
         hours24: [
-          { hour: 0, temp: 0, feels: -4, icon: 'sleet', cond: 'Мокрый снег', prob: 75, wind: 4.0, dir: 'ЮВ', deg: 135, hum: 88, press: 753 },
-          { hour: 1, temp: 0, feels: -4, icon: 'sleet', cond: 'Мокрый снег', prob: 75, wind: 4.1, dir: 'ЮВ', deg: 135, hum: 88, press: 753 },
-          { hour: 2, temp: -1, feels: -5, icon: 'sleet', cond: 'Снежная морось', prob: 75, wind: 4.2, dir: 'ЮВ', deg: 135, hum: 89, press: 753 },
-          { hour: 3, temp: -1, feels: -5, icon: 'sleet', cond: 'Снежная крупа', prob: 75, wind: 4.2, dir: 'ЮВ', deg: 135, hum: 89, press: 753 },
-          { hour: 4, temp: 0, feels: -4, icon: 'overcast', cond: 'Пасмурно, туман', prob: 70, wind: 4.1, dir: 'ЮВ', deg: 135, hum: 89, press: 754 },
-          { hour: 5, temp: 0, feels: -4, icon: 'overcast', cond: 'Пасмурно, сыро', prob: 70, wind: 4.2, dir: 'ЮВ', deg: 135, hum: 88, press: 754 },
-          { hour: 6, temp: +1, feels: -3, icon: 'overcast', cond: 'Пасмурно, сыро', prob: 70, wind: 4.2, dir: 'ЮВ', deg: 135, hum: 88, press: 754 },
-          { hour: 7, temp: +1, feels: -3, icon: 'overcast', cond: 'Пасмурно', prob: 70, wind: 4.3, dir: 'ЮВ', deg: 135, hum: 87, press: 754 },
-          { hour: 8, temp: +1, feels: -3, icon: 'overcast', cond: 'Пасмурно, морось', prob: 70, wind: 4.4, dir: 'ЮВ', deg: 135, hum: 86, press: 754 },
-          { hour: 9, temp: +2, feels: -2, icon: 'sleet', cond: 'Слабый снег с дождём', prob: 65, wind: 4.4, dir: 'ЮВ', deg: 135, hum: 86, press: 755 },
-          { hour: 10, temp: +2, feels: -2, icon: 'sleet', cond: 'Слабый мокрый снег', prob: 65, wind: 4.5, dir: 'Ю', deg: 180, hum: 85, press: 755 },
-          { hour: 11, temp: +2, feels: -1, icon: 'sleet', cond: 'Слякоть, морось', prob: 65, wind: 4.5, dir: 'Ю', deg: 180, hum: 85, press: 755 },
-          { hour: 12, temp: +2, feels: -1, icon: 'sleet', cond: 'Слабый снег с дождём', prob: 65, wind: 4.5, dir: 'Ю', deg: 180, hum: 85, press: 755 },
-          { hour: 13, temp: +3, feels: 0, icon: 'overcast', cond: 'Пасмурно', prob: 65, wind: 4.4, dir: 'Ю', deg: 180, hum: 84, press: 755 },
-          { hour: 14, temp: +2, feels: -1, icon: 'sleet', cond: 'Слабый снег с дождём', prob: 65, wind: 4.5, dir: 'Ю', deg: 180, hum: 86, press: 755 },
-          { hour: 15, temp: +2, feels: -1, icon: 'sleet', cond: 'Снег с дождём', prob: 65, wind: 4.4, dir: 'Ю', deg: 180, hum: 86, press: 755 },
-          { hour: 16, temp: +1, feels: -2, icon: 'overcast', cond: 'Сумерки над Волгой', prob: 60, wind: 4.2, dir: 'Ю', deg: 180, hum: 87, press: 756 },
-          { hour: 17, temp: +1, feels: -2, icon: 'sleet', cond: 'Мокрый снег', prob: 60, wind: 4.0, dir: 'Ю', deg: 180, hum: 88, press: 756 },
-          { hour: 18, temp: 0, feels: -4, icon: 'sleet', cond: 'Осадки, гололедица', prob: 60, wind: 3.8, dir: 'Ю', deg: 180, hum: 89, press: 756 },
-          { hour: 19, temp: 0, feels: -4, icon: 'sleet', cond: 'Гололедица', prob: 60, wind: 3.8, dir: 'Ю', deg: 180, hum: 89, press: 756 },
-          { hour: 20, temp: 0, feels: -4, icon: 'sleet', cond: 'Замерзающая морось', prob: 60, wind: 3.7, dir: 'ЮВ', deg: 135, hum: 90, press: 756 },
-          { hour: 21, temp: -1, feels: -5, icon: 'sleet', cond: 'Снежная крупа', prob: 60, wind: 3.7, dir: 'ЮВ', deg: 135, hum: 90, press: 756 },
-          { hour: 22, temp: -1, feels: -5, icon: 'sleet', cond: 'Снежная крупа', prob: 60, wind: 3.6, dir: 'ЮВ', deg: 135, hum: 91, press: 757 },
-          { hour: 23, temp: -1, feels: -5, icon: 'sleet', cond: 'Гололёд на дорогах', prob: 60, wind: 3.6, dir: 'ЮВ', deg: 135, hum: 91, press: 757 }
+          { hour: 0, temp: 0, feels: -4, icon: 'sleet', cond: 'Мокрый снег', prob: 70, wind: 4.2, dir: 'СЗ', deg: 315, hum: 87, press: 754 },
+          { hour: 1, temp: 0, feels: -4, icon: 'sleet', cond: 'Мокрый снег', prob: 70, wind: 4.2, dir: 'СЗ', deg: 315, hum: 87, press: 754 },
+          { hour: 2, temp: -1, feels: -5, icon: 'sleet', cond: 'Снежная морось', prob: 70, wind: 4.3, dir: 'СЗ', deg: 315, hum: 88, press: 754 },
+          { hour: 3, temp: -1, feels: -5, icon: 'sleet', cond: 'Снежная крупа', prob: 70, wind: 4.3, dir: 'СЗ', deg: 315, hum: 88, press: 754 },
+          { hour: 4, temp: 0, feels: -4, icon: 'overcast', cond: 'Пасмурно, туман', prob: 65, wind: 4.3, dir: 'СЗ', deg: 315, hum: 88, press: 755 },
+          { hour: 5, temp: 0, feels: -4, icon: 'overcast', cond: 'Пасмурно, сыро', prob: 65, wind: 4.4, dir: 'СЗ', deg: 315, hum: 87, press: 755 },
+          { hour: 6, temp: +1, feels: -3, icon: 'overcast', cond: 'Пасмурно, сыро', prob: 65, wind: 4.4, dir: 'СЗ', deg: 315, hum: 87, press: 755 },
+          { hour: 7, temp: +1, feels: -3, icon: 'overcast', cond: 'Пасмурно', prob: 65, wind: 4.4, dir: 'СЗ', deg: 315, hum: 86, press: 755 },
+          { hour: 8, temp: +1, feels: -3, icon: 'overcast', cond: 'Пасмурно, морось', prob: 65, wind: 4.5, dir: 'СЗ', deg: 315, hum: 85, press: 755 },
+          { hour: 9, temp: +2, feels: -2, icon: 'sleet', cond: 'Слабый снег с дождём', prob: 60, wind: 4.5, dir: 'СЗ', deg: 315, hum: 85, press: 755 },
+          { hour: 10, temp: +2, feels: -2, icon: 'sleet', cond: 'Слабый мокрый снег', prob: 60, wind: 4.5, dir: 'СЗ', deg: 315, hum: 85, press: 755 },
+          { hour: 11, temp: +2, feels: -2, icon: 'sleet', cond: 'Слякоть, сырость', prob: 60, wind: 4.5, dir: 'СЗ', deg: 315, hum: 85, press: 755 },
+          { hour: 12, temp: +2, feels: -2, icon: 'sleet', cond: 'Пасмурно, сырость', prob: 60, wind: 4.5, dir: 'СЗ', deg: 315, hum: 85, press: 755 },
+          { hour: 13, temp: +2, feels: -2, icon: 'overcast', cond: 'Пасмурно', prob: 60, wind: 4.4, dir: 'СЗ', deg: 315, hum: 84, press: 755 },
+          { hour: 14, temp: +2, feels: -2, icon: 'sleet', cond: 'Слабый снег с дождём', prob: 60, wind: 4.4, dir: 'СЗ', deg: 315, hum: 85, press: 755 },
+          { hour: 15, temp: +2, feels: -2, icon: 'sleet', cond: 'Снег с дождём', prob: 60, wind: 4.3, dir: 'СЗ', deg: 315, hum: 85, press: 755 },
+          { hour: 16, temp: +1, feels: -3, icon: 'overcast', cond: 'Сумерки над Волгой', prob: 60, wind: 4.2, dir: 'СЗ', deg: 315, hum: 86, press: 756 },
+          { hour: 17, temp: +1, feels: -3, icon: 'sleet', cond: 'Мокрый снег', prob: 60, wind: 4.1, dir: 'СЗ', deg: 315, hum: 87, press: 756 },
+          { hour: 18, temp: 0, feels: -4, icon: 'sleet', cond: 'Осадки, гололедица', prob: 60, wind: 4.0, dir: 'СЗ', deg: 315, hum: 88, press: 756 },
+          { hour: 19, temp: 0, feels: -4, icon: 'sleet', cond: 'Гололедица', prob: 60, wind: 4.0, dir: 'СЗ', deg: 315, hum: 88, press: 756 },
+          { hour: 20, temp: 0, feels: -4, icon: 'sleet', cond: 'Замерзающая морось', prob: 60, wind: 3.9, dir: 'СЗ', deg: 315, hum: 89, press: 756 },
+          { hour: 21, temp: -1, feels: -5, icon: 'sleet', cond: 'Снежная крупа', prob: 60, wind: 3.8, dir: 'СЗ', deg: 315, hum: 89, press: 756 },
+          { hour: 22, temp: -1, feels: -5, icon: 'sleet', cond: 'Снежная крупа', prob: 60, wind: 3.7, dir: 'СЗ', deg: 315, hum: 90, press: 757 },
+          { hour: 23, temp: -1, feels: -5, icon: 'sleet', cond: 'Гололёд на дорогах', prob: 60, wind: 3.6, dir: 'СЗ', deg: 315, hum: 90, press: 757 }
         ],
         landmarks: {
           qol_sharif: {
             title: 'Мечеть Кул-Шариф',
             type: 'Главная джума-мечеть Татарстана',
             height: 'Высота: 58 м (4 главных минарета)',
-            temp: '+0.2°C (на балконе минарета)',
-            wind: '7.8 м/с',
+            temp: '+0.5°C (на балконе минарета)',
+            wind: '7.5 м/с',
             visibility: '8 км',
-            fact: 'Бирюзовые шатровые купола мечети символизируют древнюю «Казанскую шапку». Белый уральский мрамор в ноябре гармонирует с первыми снежинками над рекой Казанкой.'
+            fact: 'Бирюзовые купола мечети символизируют «Казанскую шапку». Белый уральский мрамор стен в начале ноября гармонирует с первыми снежинками над рекой Казанкой.'
           },
           soyembika: {
             title: 'Башня Сююмбике',
             type: 'Знаменитая «падающая» дозорная башня',
             height: 'Высота: 58 м (наклон 1.98 м)',
-            temp: '+1.1°C',
-            wind: '5.2 м/с',
+            temp: '+1.3°C',
+            wind: '5.0 м/с',
             visibility: '8 км',
-            fact: 'Одна из известнейших наклоненных башен мира со шпилем и полумесяцем. Ее ступенчатая 7-ярусная кирпичная кладка увенчана дозорной вышкой.'
+            fact: 'Ступенчатая семиярусная кирпичная кладка увенчана дозорной вышкой. Известный символ Казани с заметным архитектурным наклоном в сторону долины.'
           },
           kremlin_walls: {
             title: 'Белокаменный Казанский кремль',
             type: 'Объект Всемирного наследия ЮНЕСКО',
             height: 'Протяженность стен: около 1.8 км',
-            temp: '+1.5°C',
-            wind: '5.8 м/с (бриз со слияния Волги и Казанки)',
+            temp: '+1.8°C',
+            wind: '5.2 м/с (свежий бриз со слияния Волги и Казанки)',
             visibility: '8 км',
-            fact: 'Древняя крепость на высоком мысу, где встречаются реки Волга и Казанка. Белокаменные стены возведены русскими зодчими Постником Яковлевым и Иваном Ширяем.'
+            fact: 'Древняя крепость на высоком холме. Белокаменные стены возведены псковскими зодчими Постником Яковлевым и Иваном Ширяем.'
           }
         }
       }
     ];
 
     let currentCityIndex = 0;
-    let selectedHour = 14;
+    let selectedHour = 12;
     let soundEnabled = true;
     let audioCtx = null;
 
@@ -881,14 +905,66 @@
       } catch(e){}
     }
 
+    /* Toast Notification (Friendly, safe in iframe) */
+    function showToast(msg) {
+      const toast = document.getElementById('toastNotification');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-y-[-20px]');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-y-0');
+        toast.classList.add('opacity-0', 'translate-y-[-20px]');
+      }, 3200);
+    }
+
+    /* Copy Post for VK using execCommand fallback */
+    function copyVKPostText() {
+      const city = citiesList[currentCityIndex];
+      const vkText = `Доброе утро! ☀️ Сводка погоды на сегодня (1 ноября 2026):\n\n` +
+        `1️⃣ Москва: +3°C, мокрый снег с дождем, ветер СЗ 5.2 м/с\n` +
+        `2️⃣ Санкт-Петербург: +4°C, морось, Нева +5°C, ветер ЮЗ 6.1 м/с\n` +
+        `3️⃣ Новосибирск: -2°C, сибирский снегопад, ветер С 3.8 м/с\n` +
+        `4️⃣ Екатеринбург: -1°C, переменная облачность, ветер З 4.0 м/с\n` +
+        `5️⃣ Казань: +2°C, пасмурно, сырость, ветер СЗ 4.5 м/с\n\n` +
+        `🔍 Покликать интерактивную карту с микроклиматом высоток и почасовым прогнозом:\n` +
+        `https://anabios.github.io/weather-russia/\n\n` +
+        `💬 А какая температура и погода сейчас у вас за окном? Напишите в комментариях!\n` +
+        `#погода #россия #москва #питер #сибирь #урал #казань`;
+
+      const textarea = document.createElement('textarea');
+      textarea.value = vkText;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-999999px';
+      textarea.style.top = '-999999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      
+      let success = false;
+      try {
+        success = document.execCommand('copy');
+      } catch (err) {
+        success = false;
+      }
+      document.body.removeChild(textarea);
+
+      if (success) {
+        playChime(780, 'triangle');
+        showToast('Готовый текст утреннего поста скопирован!');
+      } else {
+        showToast('Выделите и скопируйте текст вручную');
+      }
+    }
+
     document.getElementById('soundToggle').addEventListener('click', () => {
       soundEnabled = !soundEnabled;
       const soundIcon = document.getElementById('soundIcon');
       if (soundEnabled) {
         soundIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>';
         playChime(660);
+        showToast('Звуковые эффекты включены');
       } else {
         soundIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z m12 0l-6-6m0 6l6-6"/>';
+        showToast('Звуковые эффекты выключены');
       }
     });
 
@@ -937,7 +1013,7 @@
       document.querySelectorAll('.landmark-hotspot').forEach(el => el.classList.remove('focused'));
     }
 
-    /* Vector SVG Generation for each of the 5 cities */
+    /* Vector SVG Generation for each city */
     function getCitySkylineSVG(cityId) {
       if (cityId === 'moscow') {
         return `
@@ -1246,10 +1322,11 @@
     }
 
     function resetToCurrentHour() {
-      selectedHour = 14;
-      document.getElementById('hourRangeSlider').value = 14;
-      updateDisplayForHour(14);
+      selectedHour = 12;
+      document.getElementById('hourRangeSlider').value = 12;
+      updateDisplayForHour(12);
       playChime(600);
+      showToast('Установлен полдень (12:00)');
     }
 
     function updateDisplayForHour(hour) {
@@ -1347,21 +1424,21 @@
         const div = document.createElement('div');
         div.className = 'glass-subcard p-2.5 rounded-xl cursor-pointer hover:border-amber-400/50 transition-all';
         div.onclick = () => {
-          let targetH = 14;
+          let targetH = 12;
           if (dp.name === 'Ночь') targetH = 3;
-          if (dp.name === 'Утро') targetH = 8;
-          if (dp.name === 'День') targetH = 14;
-          if (dp.name === 'Вечер') targetH = 20;
+          if (dp.name === 'Утро') targetH = 9;
+          if (dp.name === 'День') targetH = 13;
+          if (dp.name === 'Вечер') targetH = 19;
           document.getElementById('hourRangeSlider').value = targetH;
           onHourSliderChange(targetH);
         };
         div.innerHTML = `
           <div class="flex items-center justify-between text-xs text-white/60">
             <span class="font-bold text-white">${dp.name}</span>
-            <span class="font-mono text-[10px] text-amber-300">${dp.precipProb}</span>
+            <span class="font-mono-num text-[10px] text-amber-300">${dp.precipProb}</span>
           </div>
           <div class="my-1 flex items-baseline gap-1">
-            <span class="text-xl font-black text-white font-mono">${dp.temp}</span>
+            <span class="text-xl font-black text-white font-mono-num">${dp.temp}</span>
             <span class="text-[10px] text-white/50">${dp.feels}</span>
           </div>
           <div class="text-[11px] text-white/70 truncate">${dp.cond}</div>
@@ -1369,7 +1446,7 @@
         daypartsBox.appendChild(div);
       });
 
-      // Render Clickable Landmark Pills
+      // Render Clickable Landmark Badges
       const tagsContainer = document.getElementById('landmarkTagsList');
       tagsContainer.innerHTML = '';
       Object.entries(city.landmarks).forEach(([k, data]) => {
@@ -1398,10 +1475,10 @@
 
         const sign = hItem.temp > 0 ? '+' : '';
         item.innerHTML = `
-          <span class="text-[11px] font-mono text-white/60">${hItem.hour < 10 ? '0' + hItem.hour : hItem.hour}:00</span>
+          <span class="text-[11px] font-mono-num text-white/60">${hItem.hour < 10 ? '0' + hItem.hour : hItem.hour}:00</span>
           <span class="text-sm my-0.5 filter drop-shadow">${hItem.icon === 'snow' ? '❄️' : (hItem.icon === 'rain' ? '🌧️' : '🌨️')}</span>
-          <span class="text-xs font-bold font-mono text-white">${sign}${hItem.temp}°</span>
-          <span class="text-[9px] font-mono text-blue-300">${hItem.prob}%</span>
+          <span class="text-xs font-bold font-mono-num text-white">${sign}${hItem.temp}°</span>
+          <span class="text-[9px] font-mono-num text-blue-300">${hItem.prob}%</span>
         `;
         hourlyContainer.appendChild(item);
       });
@@ -1431,7 +1508,7 @@
     function initParticles() {
       particles = [];
       const currentCity = citiesList[currentCityIndex];
-      const count = currentCity.id === 'novosibirsk' ? 75 : 50;
+      const count = (currentCity.id === 'novosibirsk' || currentCity.id === 'yekaterinburg') ? 80 : 55;
       for (let i = 0; i < count; i++) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -1446,11 +1523,12 @@
 
     function renderParticles() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const isSnow = citiesList[currentCityIndex].id === 'novosibirsk';
+      const cityId = citiesList[currentCityIndex].id;
+      const isPureSnow = cityId === 'novosibirsk' || cityId === 'yekaterinburg';
       
       particles.forEach(p => {
         ctx.beginPath();
-        if (isSnow) {
+        if (isPureSnow) {
           ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
           ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
           ctx.fill();

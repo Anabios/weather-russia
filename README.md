@@ -19,22 +19,22 @@ Built with modern vanilla web technologies, dynamic SVG landmark graphics, custo
 
 ## 🏙️ Featured Cities & Landmarks
 
-1. **Moscow (`+3°C`)**
+1. **Moscow**
    - Moscow-City Skyscrapers (*Federation Tower, Evolution Tower*) with 354m altitude microclimate data.
    - Spasskaya Tower & Ruby Star chimes.
    - Saint Basil's Cathedral onion domes.
-2. **Saint Petersburg (`+4°C`)**
+2. **Saint Petersburg**
    - Palace Bridge raised bascules over the Neva River.
    - Peter and Paul Cathedral spire with the Golden Angel.
    - Saint Isaac's Cathedral dome.
-3. **Novosibirsk (`-2°C`)**
+3. **Novosibirsk**
    - Bugrinsky arched bridge over the Ob River.
    - NOVAT (Novosibirsk Opera and Ballet Theatre) grand dome.
    - Siberian pine silhouettes.
-4. **Yekaterinburg (`-1°C`)**
+4. **Yekaterinburg**
    - Iset Tower (52 floors) and Vysotsky skyscraper panoramic desk.
    - Neo-Gothic Sevastyanov's House on the City Pond embankment.
-5. **Kazan (`+2°C`)**
+5. **Kazan**
    - Qol Sharif Mosque minarets and turquoise domes.
    - Leaning Söyembikä Tower.
    - White-stone Kazan Kremlin fortress walls.

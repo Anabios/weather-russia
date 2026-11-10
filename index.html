@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Сводка погоды в мегаполисах РФ • 08.11.2026</title>
+  <title>Сводка погоды в мегаполисах РФ • 09.11.2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
@@ -14,29 +14,18 @@
       --bg-bot: #162642;
       --glass-bg: rgba(15, 23, 42, 0.72);
       --glass-border: rgba(255, 255, 255, 0.13);
-      --glass-highlight: rgba(255, 255, 255, 0.06);
       --accent-cyan: #38bdf8;
-      --accent-blue: #60a5fa;
       --accent-gold: #fbbf24;
       --accent-danger: #ef4444;
-      --accent-warn: #f59e0b;
       --text-primary: #f8fafc;
       --text-secondary: #cbd5e1;
       --text-muted: #94a3b8;
       --sky-top: #0c192c;
       --sky-horizon: #1e3a5f;
-      --window-glow: 0.35;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Inter', -apple-system, sans-serif;
       background: linear-gradient(160deg, var(--bg-top) 0%, var(--bg-mid) 52%, var(--bg-bot) 100%);
       color: var(--text-primary);
       min-height: 100vh;
@@ -48,877 +37,162 @@
       position: relative;
       transition: background 0.7s ease;
     }
-
-    /* Полноэкранный погодный движок частиц */
-    #weatherCanvas {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* Фоновое атмосферное свечение */
-    .ambient-glow {
-      position: fixed;
-      width: 650px;
-      height: 650px;
-      border-radius: 50%;
-      filter: blur(130px);
-      opacity: 0.22;
-      pointer-events: none;
-      z-index: 0;
-      transition: all 0.8s ease;
-    }
-    .ambient-glow.one {
-      top: -180px;
-      left: -120px;
-      background: var(--accent-cyan);
-    }
-    .ambient-glow.two {
-      bottom: -200px;
-      right: -120px;
-      background: #6366f1;
-    }
-
-    .app-container {
-      position: relative;
-      z-index: 2;
-      width: 100%;
-      max-width: 1040px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-    }
-
-    /* Шапка дашборда */
+    #weatherCanvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+    .app-container { position: relative; z-index: 2; width: 100%; max-width: 1040px; display: flex; flex-direction: column; gap: 18px; }
     .top-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 14px;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      padding: 16px 22px;
-      border-radius: 20px;
-      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); backdrop-filter: blur(20px);
+      padding: 16px 22px; border-radius: 20px; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.38);
     }
-
-    .brand-group {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .brand-title-row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
+    .brand-group { display: flex; flex-direction: column; gap: 6px; }
+    .brand-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     h1 {
-      font-size: clamp(1.3rem, 2.5vw, 1.75rem);
-      font-weight: 800;
-      letter-spacing: -0.02em;
+      font-size: clamp(1.3rem, 2.5vw, 1.75rem); font-weight: 800; letter-spacing: -0.02em;
       background: linear-gradient(95deg, #ffffff 0%, #7dd3fc 55%, #c084fc 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-
     .live-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      background: rgba(56, 189, 248, 0.14);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      color: #7dd3fc;
+      display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      background: rgba(56, 189, 248, 0.14); border: 1px solid rgba(56, 189, 248, 0.4); color: #7dd3fc;
     }
-
-    .live-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #38bdf8;
-      box-shadow: 0 0 8px #38bdf8;
-      animation: pulseDot 1.8s infinite;
-    }
-
-    @keyframes pulseDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.45; transform: scale(0.82); }
-    }
-
-    .subtitle-meta {
-      font-size: 0.83rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .header-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #38bdf8; box-shadow: 0 0 8px #38bdf8; animation: pulseDot 1.8s infinite; }
+    @keyframes pulseDot { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.45; transform: scale(0.82); } }
+    .subtitle-meta { font-size: 0.83rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .sound-btn {
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid var(--glass-border);
-      color: var(--text-secondary);
-      padding: 8px 14px;
-      border-radius: 12px;
-      font-family: inherit;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      transition: all 0.2s ease;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid var(--glass-border); color: var(--text-secondary);
+      padding: 8px 14px; border-radius: 12px; font-family: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 7px; transition: all 0.2s ease;
     }
-
-    .sound-btn:hover {
-      background: rgba(255, 255, 255, 0.12);
-      border-color: rgba(255, 255, 255, 0.25);
-      color: #fff;
-    }
-
-    .sound-btn.active {
-      border-color: rgba(56, 189, 248, 0.45);
-      color: var(--accent-cyan);
-    }
-
-    /* Навигация по 5 городам */
-    .city-tabs {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 10px;
-    }
-
-    @media (max-width: 820px) {
-      .city-tabs {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .city-tabs .city-tab:last-child {
-        grid-column: span 2;
-      }
-    }
-
+    .sound-btn.active { border-color: rgba(56, 189, 248, 0.45); color: var(--accent-cyan); }
+    .city-tabs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    @media (max-width: 820px) { .city-tabs { grid-template-columns: repeat(2, 1fr); } .city-tabs .city-tab:last-child { grid-column: span 2; } }
     .city-tab {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 13px 14px;
-      color: var(--text-primary);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      text-align: left;
-      position: relative;
-      overflow: hidden;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; padding: 13px 14px;
+      color: var(--text-primary); cursor: pointer; display: flex; flex-direction: column; gap: 6px; transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(16px); text-align: left; position: relative; overflow: hidden;
     }
-
-    .city-tab::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), transparent 70%);
-      opacity: 0;
-      transition: opacity 0.25s ease;
-    }
-
-    .city-tab:hover {
-      transform: translateY(-3px);
-      border-color: rgba(255, 255, 255, 0.28);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
-    }
-
-    .city-tab.active {
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 24px rgba(56, 189, 248, 0.25), inset 0 0 12px rgba(56, 189, 248, 0.12);
-    }
-
-    .city-tab.active::before {
-      opacity: 1;
-    }
-
-    .tab-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tab-city-name {
-      font-size: 0.86rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .tab-icon {
-      font-size: 1.15rem;
-    }
-
-    .tab-temp-row {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .tab-temp {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #ffffff;
-    }
-
-    .tab-feels {
-      font-size: 0.73rem;
-      color: var(--text-muted);
-    }
-
-    .tab-cond {
-      font-size: 0.72rem;
-      color: #93c5fd;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Главная стеклянная карточка дашборда */
+    .city-tab:hover { transform: translateY(-3px); border-color: rgba(255, 255, 255, 0.28); }
+    .city-tab.active { border-color: var(--accent-cyan); box-shadow: 0 0 24px rgba(56, 189, 248, 0.25); }
+    .tab-top { display: flex; justify-content: space-between; align-items: center; }
+    .tab-city-name { font-size: 0.86rem; font-weight: 700; }
+    .tab-temp-row { display: flex; align-items: baseline; gap: 8px; }
+    .tab-temp { font-family: 'JetBrains Mono', monospace; font-size: 1.35rem; font-weight: 800; color: #fff; }
+    .tab-feels { font-size: 0.73rem; color: var(--text-muted); }
+    .tab-cond { font-size: 0.72rem; color: #93c5fd; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .dashboard-card {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      padding: 22px;
-      backdrop-filter: blur(22px);
-      -webkit-backdrop-filter: blur(22px);
-      box-shadow: 0 26px 60px rgba(0, 0, 0, 0.5);
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+      background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 24px; padding: 22px;
+      backdrop-filter: blur(22px); box-shadow: 0 26px 60px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; gap: 20px;
     }
-
-    /* Секция архитектурной панорамы города */
     .panorama-stage {
-      position: relative;
-      width: 100%;
-      height: 270px;
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-horizon) 78%, #091326 100%);
-      box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.55);
-      transition: background 0.5s ease;
+      position: relative; width: 100%; height: 270px; border-radius: 18px; overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.15); background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-horizon) 78%, #091326 100%);
     }
-
     .panorama-overlay-top {
-      position: absolute;
-      top: 12px;
-      left: 14px;
-      right: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      pointer-events: none;
-      z-index: 5;
-      flex-wrap: wrap;
-      gap: 8px;
+      position: absolute; top: 12px; left: 14px; right: 14px; display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 5;
     }
-
     .stage-city-badge {
-      background: rgba(15, 23, 42, 0.78);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      backdrop-filter: blur(10px);
-      padding: 6px 13px;
-      border-radius: 12px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      background: rgba(15, 23, 42, 0.78); border: 1px solid rgba(255, 255, 255, 0.16); backdrop-filter: blur(10px);
+      padding: 6px 13px; border-radius: 12px; font-size: 0.78rem; font-weight: 600; color: var(--text-secondary);
     }
-
     .stage-hint-badge {
-      background: rgba(56, 189, 248, 0.16);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      backdrop-filter: blur(10px);
-      padding: 6px 12px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #bae6fd;
+      background: rgba(56, 189, 248, 0.16); border: 1px solid rgba(56, 189, 248, 0.4); backdrop-filter: blur(10px);
+      padding: 6px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; color: #bae6fd;
     }
-
-    .panorama-svg-wrap {
-      width: 100%;
-      height: 100%;
-    }
-
-    .panorama-svg-wrap svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    /* Интерактивные объекты на SVG-панораме */
-    .landmark-node {
-      cursor: pointer;
-      transition: filter 0.25s ease, transform 0.25s ease;
-    }
-
-    .landmark-node:hover {
-      filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.9)) brightness(1.18);
-    }
-
-    .landmark-pin {
-      cursor: pointer;
-      animation: floatPin 2.6s ease-in-out infinite;
-    }
-
-    @keyframes floatPin {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-4px); }
-    }
-
-    .beacon-blink {
-      animation: beaconPulse 1.6s infinite;
-    }
-
-    @keyframes beaconPulse {
-      0%, 100% { opacity: 1; r: 3.5px; }
-      50% { opacity: 0.25; r: 2px; }
-    }
-
-    /* Панель чипов высотного микроклимата */
-    .microclimate-bar {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 13px 16px;
-    }
-
-    .microclimate-bar-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .landmarks-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
+    .panorama-svg-wrap { width: 100%; height: 100%; }
+    .panorama-svg-wrap svg { width: 100%; height: 100%; display: block; }
+    .landmark-node { cursor: pointer; transition: filter 0.25s ease; }
+    .landmark-node:hover { filter: drop-shadow(0 0 12px rgba(56, 189, 248, 0.9)) brightness(1.18); }
+    .landmark-pin { cursor: pointer; animation: floatPin 2.6s ease-in-out infinite; }
+    @keyframes floatPin { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-4px); } }
+    .beacon-blink { animation: beaconPulse 1.6s infinite; }
+    @keyframes beaconPulse { 0%, 100% { opacity: 1; r: 3.5px; } 50% { opacity: 0.25; r: 2px; } }
+    .microclimate-bar { display: flex; flex-direction: column; gap: 10px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 16px; padding: 13px 16px; }
+    .microclimate-bar-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+    .landmarks-chips { display: flex; flex-wrap: wrap; gap: 8px; }
     .landmark-chip {
-      background: rgba(56, 189, 248, 0.09);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: #e0f2fe;
-      padding: 7px 13px;
-      border-radius: 12px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
+      background: rgba(56, 189, 248, 0.09); border: 1px solid rgba(56, 189, 248, 0.3); color: #e0f2fe;
+      padding: 7px 13px; border-radius: 12px; font-size: 0.8rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s;
     }
-
-    .landmark-chip:hover,
-    .landmark-chip.active {
-      background: var(--accent-cyan);
-      color: #071120;
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.45);
-      transform: translateY(-1px);
-    }
-
-    .chip-alt {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.72rem;
-      padding: 2px 6px;
-      border-radius: 6px;
-      background: rgba(0, 0, 0, 0.28);
-      color: inherit;
-    }
-
-    /* Раскрывающийся инспектор высотного микроклимата */
+    .landmark-chip:hover, .landmark-chip.active { background: var(--accent-cyan); color: #071120; border-color: var(--accent-cyan); box-shadow: 0 0 16px rgba(56, 189, 248, 0.45); }
+    .chip-alt { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; padding: 2px 6px; border-radius: 6px; background: rgba(0, 0, 0, 0.28); }
     .inspector-drawer {
       background: linear-gradient(135deg, rgba(14, 116, 144, 0.24) 0%, rgba(15, 23, 42, 0.9) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.45);
-      border-radius: 16px;
-      padding: 16px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
-      transition: all 0.3s ease;
+      border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px;
     }
-
-    .inspector-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .inspector-title-group {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .inspector-eyebrow {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--accent-cyan);
-    }
-
-    .inspector-title {
-      font-size: 1.08rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .inspector-stats {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .inspector-stat-pill {
-      background: rgba(15, 23, 42, 0.75);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      padding: 6px 11px;
-      border-radius: 10px;
-      font-size: 0.78rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .inspector-stat-pill strong {
-      font-family: 'JetBrains Mono', monospace;
-      color: #7dd3fc;
-    }
-
-    .inspector-desc {
-      font-size: 0.88rem;
-      line-height: 1.55;
-      color: var(--text-secondary);
-    }
-
-    /* Основной блок текущей погоды + Предупреждение HUD */
-    .main-weather-grid {
-      display: grid;
-      grid-template-columns: 1.15fr 1fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    @media (max-width: 780px) {
-      .main-weather-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .primary-temp-box {
-      background: rgba(255, 255, 255, 0.035);
-      border: 1px solid var(--glass-border);
-      border-radius: 18px;
-      padding: 18px 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 14px;
-    }
-
-    .temp-hero-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .temp-main-val {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: clamp(3.1rem, 6vw, 4.3rem);
-      font-weight: 800;
-      line-height: 1;
-      letter-spacing: -0.04em;
-      color: #ffffff;
-    }
-
-    .temp-feels-box {
-      text-align: right;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px 14px;
-      border-radius: 14px;
-    }
-
-    .temp-feels-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 2px;
-    }
-
-    .temp-feels-val {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: var(--accent-cyan);
-    }
-
-    .condition-banner {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.02rem;
-      font-weight: 600;
-      color: var(--accent-gold);
-    }
-
-    /* Плашка предупреждения (как на растровых HUD-карточках) */
+    .inspector-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+    .inspector-eyebrow { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent-cyan); }
+    .inspector-title { font-size: 1.08rem; font-weight: 700; color: #fff; }
+    .inspector-stats { display: flex; gap: 10px; flex-wrap: wrap; }
+    .inspector-stat-pill { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.14); padding: 6px 11px; border-radius: 10px; font-size: 0.78rem; display: flex; gap: 6px; }
+    .inspector-stat-pill strong { font-family: 'JetBrains Mono', monospace; color: #7dd3fc; }
+    .inspector-desc { font-size: 0.88rem; line-height: 1.55; color: var(--text-secondary); }
+    .main-weather-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; align-items: stretch; }
+    @media (max-width: 780px) { .main-weather-grid { grid-template-columns: 1fr; } }
+    .primary-temp-box { background: rgba(255, 255, 255, 0.035); border: 1px solid var(--glass-border); border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
+    .temp-hero-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; }
+    .temp-main-val { font-family: 'JetBrains Mono', monospace; font-size: clamp(3.1rem, 6vw, 4.3rem); font-weight: 800; line-height: 1; color: #fff; }
+    .temp-feels-box { text-align: right; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); padding: 10px 14px; border-radius: 14px; }
+    .temp-feels-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 2px; }
+    .temp-feels-val { font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--accent-cyan); }
+    .condition-banner { display: flex; align-items: center; gap: 10px; font-size: 1.02rem; font-weight: 600; color: var(--accent-gold); }
     .hazard-alert-box {
-      border-radius: 18px;
-      padding: 18px 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 8px;
-      background: rgba(245, 158, 11, 0.13);
-      border: 1.5px solid rgba(245, 158, 11, 0.48);
-      box-shadow: inset 0 0 24px rgba(245, 158, 11, 0.08);
+      border-radius: 18px; padding: 18px 20px; display: flex; flex-direction: column; justify-content: center; gap: 8px;
+      background: rgba(245, 158, 11, 0.13); border: 1.5px solid rgba(245, 158, 11, 0.48);
     }
-
-    .hazard-alert-box.danger {
-      background: rgba(239, 68, 68, 0.15);
-      border-color: rgba(239, 68, 68, 0.55);
-      box-shadow: inset 0 0 24px rgba(239, 68, 68, 0.1);
-    }
-
-    .hazard-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.84rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #fbbf24;
-    }
-
-    .hazard-alert-box.danger .hazard-header {
-      color: #f87171;
-    }
-
-    .hazard-text {
-      font-size: 0.92rem;
-      line-height: 1.5;
-      color: #fef3c7;
-      font-weight: 500;
-    }
-
-    .hazard-alert-box.danger .hazard-text {
-      color: #fee2e2;
-    }
-
-    .hazard-submeta {
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    /* Сетка детальных метеорологических показателей */
-    .metrics-grid {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 10px;
-    }
-
-    @media (max-width: 900px) {
-      .metrics-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    @media (max-width: 520px) {
-      .metrics-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    .metric-card {
-      background: rgba(255, 255, 255, 0.035);
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      padding: 13px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      transition: border-color 0.2s ease;
-    }
-
-    .metric-card:hover {
-      border-color: rgba(255, 255, 255, 0.26);
-    }
-
-    .metric-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-    }
-
-    .metric-value {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.98rem;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .metric-sub {
-      font-size: 0.72rem;
-      color: #93c5fd;
-    }
-
-    /* 4 времени суток (Ночь, Утро, День, Вечер) */
-    .dayparts-section {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .section-label {
-      font-size: 0.78rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .dayparts-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-
-    @media (max-width: 640px) {
-      .dayparts-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
+    .hazard-alert-box.danger { background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.55); }
+    .hazard-header { display: flex; align-items: center; gap: 8px; font-size: 0.84rem; font-weight: 800; text-transform: uppercase; color: #fbbf24; }
+    .hazard-alert-box.danger .hazard-header { color: #f87171; }
+    .hazard-text { font-size: 0.92rem; line-height: 1.5; color: #fef3c7; }
+    .hazard-alert-box.danger .hazard-text { color: #fee2e2; }
+    .hazard-submeta { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+    @media (max-width: 900px) { .metrics-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 520px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
+    .metric-card { background: rgba(255, 255, 255, 0.035); border: 1px solid var(--glass-border); border-radius: 14px; padding: 13px 14px; display: flex; flex-direction: column; gap: 5px; }
+    .metric-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; color: var(--text-muted); }
+    .metric-value { font-family: 'JetBrains Mono', monospace; font-size: 0.98rem; font-weight: 700; color: #fff; }
+    .metric-sub { font-size: 0.72rem; color: #93c5fd; }
+    .dayparts-section { display: flex; flex-direction: column; gap: 10px; }
+    .section-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; color: var(--text-muted); display: flex; justify-content: space-between; }
+    .dayparts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+    @media (max-width: 640px) { .dayparts-grid { grid-template-columns: repeat(2, 1fr); } }
     .daypart-item {
-      background: rgba(255, 255, 255, 0.035);
-      border: 1px solid var(--glass-border);
-      border-radius: 14px;
-      padding: 13px 14px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      transition: all 0.22s ease;
+      background: rgba(255, 255, 255, 0.035); border: 1px solid var(--glass-border); border-radius: 14px; padding: 13px 14px;
+      cursor: pointer; display: flex; flex-direction: column; gap: 6px; transition: all 0.22s ease;
     }
-
-    .daypart-item:hover {
-      background: rgba(255, 255, 255, 0.07);
-      transform: translateY(-2px);
-    }
-
-    .daypart-item.active {
-      background: rgba(56, 189, 248, 0.15);
-      border-color: var(--accent-cyan);
-      box-shadow: 0 0 18px rgba(56, 189, 248, 0.22);
-    }
-
-    .dp-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .dp-name {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    .dp-hours {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      font-family: 'JetBrains Mono', monospace;
-    }
-
-    .dp-temp-row {
-      display: flex;
-      align-items: baseline;
-       justify-content: space-between;
-      margin-top: 2px;
-    }
-
-    .dp-temp {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .dp-feels {
-      font-size: 0.73rem;
-      color: var(--text-muted);
-    }
-
-    .dp-desc {
-      font-size: 0.73rem;
-      color: #bae6fd;
-    }
-
-    /* Интерактивный 24-часовой суточный таймлайн */
-    .timeline-box {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 16px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .timeline-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .timeline-title {
-      font-size: 0.82rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .daypart-item:hover { background: rgba(255, 255, 255, 0.07); transform: translateY(-2px); }
+    .daypart-item.active { background: rgba(56, 189, 248, 0.15); border-color: var(--accent-cyan); box-shadow: 0 0 18px rgba(56, 189, 248, 0.22); }
+    .dp-top { display: flex; justify-content: space-between; align-items: center; }
+    .dp-name { font-size: 0.82rem; font-weight: 700; }
+    .dp-hours { font-size: 0.7rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+    .dp-temp-row { display: flex; align-items: baseline; justify-content: space-between; margin-top: 2px; }
+    .dp-temp { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight: 800; color: #fff; }
+    .dp-feels { font-size: 0.73rem; color: var(--text-muted); }
+    .dp-desc { font-size: 0.73rem; color: #bae6fd; }
+    .timeline-box { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 16px; padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+    .timeline-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .timeline-title { font-size: 0.82rem; font-weight: 700; color: var(--text-secondary); }
     .timeline-clock {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--accent-cyan);
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      padding: 4px 12px;
-      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace; font-size: 0.95rem; font-weight: 700; color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.35); padding: 4px 12px; border-radius: 8px;
     }
-
-    .slider-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
     input[type="range"]#hourSlider {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 8px;
-      background: linear-gradient(90deg, #1e293b 0%, #38bdf8 50%, #1e293b 100%);
-      border-radius: 999px;
-      outline: none;
-      cursor: pointer;
+      -webkit-appearance: none; appearance: none; width: 100%; height: 8px;
+      background: linear-gradient(90deg, #1e293b 0%, #38bdf8 50%, #1e293b 100%); border-radius: 999px; outline: none; cursor: pointer;
     }
-
     input[type="range"]#hourSlider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: #ffffff;
-      border: 3px solid var(--accent-cyan);
-      box-shadow: 0 0 12px rgba(56, 189, 248, 0.8);
-      cursor: pointer;
-      transition: transform 0.15s ease;
+      -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%;
+      background: #fff; border: 3px solid var(--accent-cyan); box-shadow: 0 0 12px rgba(56, 189, 248, 0.8); cursor: pointer;
     }
-
-    input[type="range"]#hourSlider::-webkit-slider-thumb:hover {
-      transform: scale(1.15);
-    }
-
-    .timeline-ticks {
-      display: flex;
-      justify-content: space-between;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      padding: 0 4px;
-    }
-
-    /* Подвал */
-    .footer-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      padding: 4px 8px;
-    }
+    .timeline-ticks { display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; color: var(--text-muted); padding: 0 4px; }
+    .footer-bar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 0.76rem; color: var(--text-muted); padding: 4px 8px; }
   </style>
 </head>
 <body>
-  <div class="ambient-glow one" id="glowOne"></div>
-  <div class="ambient-glow two" id="glowTwo"></div>
   <canvas id="weatherCanvas"></canvas>
 
   <div class="app-container">
-    <!-- Шапка без лишних кнопок ВК/экспорта -->
     <header class="top-header">
       <div class="brand-group">
         <div class="brand-title-row">
@@ -926,7 +200,7 @@
           <span class="live-pill"><span class="live-dot"></span>Яндекс Погода</span>
         </div>
         <div class="subtitle-meta">
-          <span>Воскресенье, 08.11.2026</span>
+          <span>Понедельник, 09.11.2026</span>
           <span>•</span>
           <span>Синхронизированный интерактивный метеодашборд (5 городов)</span>
         </div>
@@ -939,12 +213,9 @@
       </div>
     </header>
 
-    <!-- Табы 5 мегаполисов -->
     <nav class="city-tabs" id="cityTabs"></nav>
 
-    <!-- Основная карточка -->
     <main class="dashboard-card">
-      <!-- Интерактивная архитектурная SVG-панорама -->
       <section class="panorama-stage" id="panoramaStage">
         <div class="panorama-overlay-top">
           <div class="stage-city-badge" id="stageCityBadge">📍 Москва • Панорама и микроклимат</div>
@@ -953,14 +224,12 @@
         <div class="panorama-svg-wrap" id="panoramaSvgWrap"></div>
       </section>
 
-      <!-- Панель выбора точек высотного микроклимата -->
       <section class="microclimate-bar">
         <div class="microclimate-bar-header">
           <span>Инспектор высотного микроклимата (смотровые площадки, шпили и мосты)</span>
           <span id="activeLandmarkHint">Выбрана точка: 1 из 3</span>
         </div>
         <div class="landmarks-chips" id="landmarksChips"></div>
-        <!-- Детальная карточка выбранной высотной точки -->
         <div class="inspector-drawer" id="inspectorDrawer">
           <div class="inspector-top">
             <div class="inspector-title-group">
@@ -969,25 +238,24 @@
             </div>
             <div class="inspector-stats">
               <div class="inspector-stat-pill">Высота: <strong id="inspAlt">354 м</strong></div>
-              <div class="inspector-stat-pill">На высоте: <strong id="inspTemp">-5.5°C</strong></div>
-              <div class="inspector-stat-pill">Порывы: <strong id="inspWind">11.8 м/с</strong></div>
+              <div class="inspector-stat-pill">На высоте: <strong id="inspTemp">-6.0°C</strong></div>
+              <div class="inspector-stat-pill">Порывы: <strong id="inspWind">12.0 м/с</strong></div>
             </div>
           </div>
           <p class="inspector-desc" id="inspDesc"></p>
         </div>
       </section>
 
-      <!-- Главные цифры и плашка опасных явлений (1:1 с HUD-карточками) -->
       <section class="main-weather-grid">
         <div class="primary-temp-box">
           <div class="temp-hero-row">
             <div>
-              <div class="temp-main-val" id="mainTemp">-2°C</div>
+              <div class="temp-main-val" id="mainTemp">-3°C</div>
               <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 4px;" id="mainCitySub">Москва • Метеостанция ВДНХ / Балчуг</div>
             </div>
             <div class="temp-feels-box">
               <div class="temp-feels-label">Ощущается как</div>
-              <div class="temp-feels-val" id="mainFeels">-6°C</div>
+              <div class="temp-feels-val" id="mainFeels">-7°C</div>
             </div>
           </div>
           <div class="condition-banner">
@@ -999,26 +267,25 @@
         <div class="hazard-alert-box" id="hazardBox">
           <div class="hazard-header" id="hazardHeader">⚠️ ВНИМАНИЕ • ОПЕРАТИВНОЕ ПРЕДУПРЕЖДЕНИЕ</div>
           <div class="hazard-text" id="hazardText">Гололедица, снежный накат на мостах и эстакадах. Умеренный северо-западный ветер.</div>
-          <div class="hazard-submeta" id="hazardSubmeta">Сводка синхронизирована с Яндекс Погодой на 08.11.2026</div>
+          <div class="hazard-submeta" id="hazardSubmeta">Сводка синхронизирована с Яндекс Погодой на 09.11.2026</div>
         </div>
       </section>
 
-      <!-- 6 ключевых метеопараметров -->
       <section class="metrics-grid">
         <div class="metric-card">
           <span class="metric-label">Ветер</span>
-          <span class="metric-value" id="mWind">СЗ 4.2 м/с</span>
-          <span class="metric-sub" id="mWindGust">Порывы до 9.5 м/с</span>
+          <span class="metric-value" id="mWind">СЗ 4.5 м/с</span>
+          <span class="metric-sub" id="mWindGust">Порывы до 10 м/с</span>
         </div>
         <div class="metric-card">
           <span class="metric-label">Давление</span>
-          <span class="metric-value" id="mPressure">752 мм рт. ст.</span>
-          <span class="metric-sub" id="mPressureSub">В пределах нормы</span>
+          <span class="metric-value" id="mPressure">753 мм рт. ст.</span>
+          <span class="metric-sub" id="mPressureSub">Атмосферный фронт</span>
         </div>
         <div class="metric-card">
           <span class="metric-label">Влажность</span>
-          <span class="metric-value" id="mHumidity">83%</span>
-          <span class="metric-sub" id="mDewPoint">Точка росы -4.4°C</span>
+          <span class="metric-value" id="mHumidity">84%</span>
+          <span class="metric-sub" id="mDewPoint">Точка росы -5.2°C</span>
         </div>
         <div class="metric-card">
           <span class="metric-label">Осадки</span>
@@ -1028,25 +295,23 @@
         <div class="metric-card">
           <span class="metric-label">Видимость</span>
           <span class="metric-value" id="mVis">6.0 км</span>
-          <span class="metric-sub" id="mVisSub">Дымка / снежная взвесь</span>
+          <span class="metric-sub" id="mVisSub">Снежная дымка</span>
         </div>
         <div class="metric-card">
-          <span class="metric-label" id="mExtraLabel">Состояние трасс</span>
+          <span class="metric-label" id="mExtraLabel">Дорожная сеть</span>
           <span class="metric-value" id="mExtraVal">Гололедица</span>
           <span class="metric-sub" id="mExtraSub">Накат на эстакадах</span>
         </div>
       </section>
 
-      <!-- Прогноз по 4 периодам суток -->
       <section class="dayparts-section">
         <div class="section-label">
-          <span>Динамика по периодам суток (08.11.2026)</span>
+          <span>Динамика по периодам суток (09.11.2026)</span>
           <span>Нажмите на карточку для перехода ко времени</span>
         </div>
         <div class="dayparts-grid" id="daypartsGrid"></div>
       </section>
 
-      <!-- 24-часовой интерактивный ползунок -->
       <section class="timeline-box">
         <div class="timeline-header">
           <div class="timeline-title">
@@ -1057,15 +322,7 @@
         <div class="slider-wrap">
           <input type="range" id="hourSlider" min="0" max="23" value="12">
           <div class="timeline-ticks">
-            <span>00:00</span>
-            <span>03:00</span>
-            <span>06:00</span>
-            <span>09:00</span>
-            <span>12:00</span>
-            <span>15:00</span>
-            <span>18:00</span>
-            <span>21:00</span>
-            <span>23:00</span>
+            <span>00:00</span><span>03:00</span><span>06:00</span><span>09:00</span><span>12:00</span><span>15:00</span><span>18:00</span><span>21:00</span><span>23:00</span>
           </div>
         </div>
       </section>
@@ -1073,407 +330,137 @@
 
     <footer class="footer-bar">
       <span>Weather Cards Russia • Интерактивная метеосистема 5 мегаполисов</span>
-      <span>Данные синхронизированы: Москва (-2°C) • СПб (-1°C) • Новосибирск (-11°C) • Екатеринбург (-8°C) • Казань (-3°C)</span>
+      <span>Данные синхронизированы: Москва (-3°C) • СПб (-2°C) • Новосибирск (-12°C) • Екатеринбург (-9°C) • Казань (-4°C)</span>
     </footer>
   </div>
 
   <script>
-    /* ==========================================================
-       ЗВУКОВОЙ ДВИЖОК (Web Audio API)
-       ========================================================== */
     let soundEnabled = true;
     let audioCtx = null;
 
     function playTone(freq = 540, duration = 0.07, type = 'sine') {
       if (!soundEnabled) return;
       try {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = type;
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
         gain.gain.setValueAtTime(0.035, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + duration);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(); osc.stop(audioCtx.currentTime + duration);
       } catch (e) {}
     }
 
     function toggleAudio() {
       soundEnabled = !soundEnabled;
       const btn = document.getElementById('soundToggleBtn');
-      const icon = document.getElementById('soundIcon');
-      const label = document.getElementById('soundLabel');
       btn.classList.toggle('active', soundEnabled);
-      icon.textContent = soundEnabled ? '🔊' : '🔇';
-      label.textContent = soundEnabled ? 'Звук отклика: ВКЛ' : 'Звук отклика: ВЫКЛ';
-      if (soundEnabled) playTone(660, 0.09);
+      document.getElementById('soundIcon').textContent = soundEnabled ? '🔊' : '🔇';
+      document.getElementById('soundLabel').textContent = soundEnabled ? 'Звук отклика: ВКЛ' : 'Звук отклика: ВЫКЛ';
     }
 
-    /* ==========================================================
-       БАЗА ДАННЫХ 5 ГОРОДОВ НА 08.11.2026 (100% СИНХРОНИЗАЦИЯ)
-       ========================================================== */
     const CITIES = [
       {
-        id: 'msk',
-        order: 1,
-        name: 'Москва',
-        station: 'Москва • Метеостанция ВДНХ / Балчуг',
-        icon: '🌨️',
-        baseTemp: -2,
-        baseFeels: -6,
-        shortCond: 'Слабый снег, гололедица',
-        fullCond: 'Облачно с прояснениями, слабый снег, гололедица',
-        windDir: 'СЗ',
-        windSpeed: 4.2,
-        windGust: 'Порывы до 9.5 м/с',
-        pressure: 752,
-        pressureSub: 'Атмосферный фронт',
-        humidity: 83,
-        dewPoint: 'Точка росы -4.4°C',
-        precip: 'Слабый снег',
-        precipSub: 'Облачно с прояснениями',
-        visibility: '6.0 км',
-        visSub: 'Местами снежная дымка',
-        extraLabel: 'Дорожная сеть',
-        extraVal: 'Гололедица',
-        extraSub: 'Накат на мостах и эстакадах',
-        hazardLevel: 'warn',
-        hazardTitle: '⚠️ ВНИМАНИЕ: ГОЛОЛЕДИЦА И НАКАТ',
-        hazardText: 'Гололедица, накат на мостах и эстакадах. В высотном коридоре «Москва-Сити» порывы северо-западного ветра.',
-        particleMode: 'snow_calm',
-        theme: {
-          top: '#091122',
-          mid: '#13233f',
-          bot: '#1c2e4a',
-          skyTop: '#101d35',
-          skyHor: '#274060'
-        },
+        id: 'msk', order: 1, name: 'Москва', station: 'Москва • Метеостанция ВДНХ / Балчуг', icon: '🌨️',
+        baseTemp: -3, baseFeels: -7, shortCond: 'Слабый снег, гололедица', fullCond: 'Облачно с прояснениями, слабый снег, гололедица',
+        windDir: 'СЗ', windSpeed: 4.5, windGust: 'Порывы до 10 м/с', pressure: 753, pressureSub: 'Атмосферный фронт',
+        humidity: 84, dewPoint: 'Точка росы -5.2°C', precip: 'Слабый снег', precipSub: 'Облачно с прояснениями',
+        visibility: '6.0 км', visSub: 'Снежная дымка', extraLabel: 'Дорожная сеть', extraVal: 'Гололедица', extraSub: 'Накат на мостах и эстакадах',
+        hazardLevel: 'warn', hazardTitle: '⚠️ ВНИМАНИЕ: ГОЛОЛЕДИЦА И НАКАТ', hazardText: 'Гололедица, снежный накат на эстакадах. Умеренный северо-западный ветер.',
+        particleMode: 'snow_calm', theme: { top: '#091122', mid: '#13233f', bot: '#1c2e4a', skyTop: '#101d35', skyHor: '#274060' },
         dayparts: [
-          { name: 'Ночь', hours: '00:00–06:00', h: 3, t: -4, f: -8, desc: 'Снег, подмораживание' },
-          { name: 'Утро', hours: '06:00–12:00', h: 8, t: -3, f: -7, desc: 'Слабый снег, накат' },
-          { name: 'День', hours: '12:00–18:00', h: 12, t: -2, f: -6, desc: 'Облачно с прояснениями' },
-          { name: 'Вечер', hours: '18:00–00:00', h: 20, t: -3, f: -7, desc: 'Гололедица, -3°C' }
+          { name: 'Ночь', hours: '00:00–06:00', h: 3, t: -5, f: -9, desc: 'Снег, подмораживание' },
+          { name: 'Утро', hours: '06:00–12:00', h: 8, t: -4, f: -8, desc: 'Слабый снег, накат' },
+          { name: 'День', hours: '12:00–18:00', h: 12, t: -3, f: -7, desc: 'Облачно с прояснениями' },
+          { name: 'Вечер', hours: '18:00–00:00', h: 20, t: -4, f: -8, desc: 'Гололедица, -4°C' }
         ],
         landmarks: [
-          {
-            key: 'city',
-            name: 'Москва-Сити (PANORAMA360)',
-            alt: '354 м',
-            temp: '-5.5°C',
-            wind: '11.8 м/с',
-            eyebrow: 'ВЫСОТНЫЙ МЕТЕОПОСТ • БАШНЯ ФЕДЕРАЦИЯ',
-            desc: 'На высоте смотровой площадки (89 этаж, 354 м) температура воздуха опускается до -5.5°C (ощущается как -12°C). Скорость северо-западного ветра в высотном створе в 2.5 раза выше приземной, фиксируется горизонтальная снежная крупа и облачная дымка.'
-          },
-          {
-            key: 'spasskaya',
-            name: 'Спасская башня Кремля',
-            alt: '71 м',
-            temp: '-2.6°C',
-            wind: '5.8 м/с',
-            eyebrow: 'КРЕМЛЁВСКАЯ НАБЕРЕЖНАЯ • РУБИНОВАЯ ЗВЕЗДА',
-            desc: 'На ярусе курантов и звезды (71 м) температура составляет -2.6°C. На спусках от Красной площади к Москве-реке и на Большом Москворецком мосту из-за речной влажности (83%) образуется плотная гололедица.'
-          },
-          {
-            key: 'vasily',
-            name: 'Храм Василия Блаженного и набережная',
-            alt: '47 м',
-            temp: '-2.1°C',
-            wind: '4.4 м/с',
-            eyebrow: 'ВАСИЛЬЕВСКИЙ СПУСК • АКВАТОРИЯ МОСКВЫ-РЕКИ',
-            desc: 'У воды и на брусчатке Васильевского спуска температура -2.1°C. По акватории Москвы-реки идёт первичная шуга и забереги, на гранитных парапетах тонкий слой кристаллического инея.'
-          }
+          { key: 'city', name: 'Москва-Сити (PANORAMA360)', alt: '354 м', temp: '-6.0°C', wind: '12.0 м/с', eyebrow: 'ВЫСОТНЫЙ МЕТЕОПОСТ • БАШНЯ ФЕДЕРАЦИЯ', desc: 'На высоте 89 этажа (354 м) температура -6.0°C (ощущается как -13°C). Скорость ветра в высотном коридоре выше приземной, облачная взвесь.' },
+          { key: 'spasskaya', name: 'Спасская башня Кремля', alt: '71 м', temp: '-3.1°C', wind: '6.0 м/с', eyebrow: 'КРЕМЛЁВСКАЯ НАБЕРЕЖНАЯ • РУБИНОВАЯ ЗВЕЗДА', desc: 'На ярусе курантов температура -3.1°C, на спусках к реке фиксируется гололедица.' },
+          { key: 'vasily', name: 'Храм Василия Блаженного и набережная', alt: '47 м', temp: '-2.5°C', wind: '4.6 м/с', eyebrow: 'ВАСИЛЬЕВСКИЙ СПУСК • МОСКВА-РЕКА', desc: 'Влажность 84%, по акватории идёт первичная шуга.' }
         ]
       },
       {
-        id: 'spb',
-        order: 2,
-        name: 'Санкт-Петербург',
-        station: 'Санкт-Петербург • Петроградская / Акватория Невы',
-        icon: '🌫️',
-        baseTemp: -1,
-        baseFeels: -5,
-        shortCond: 'Мокрый снег, туман',
-        fullCond: 'Пасмурно, мокрый снег, изморозь, туман, Нева +3°C',
-        windDir: 'СЗ',
-        windSpeed: 4.8,
-        windGust: 'С Финского залива до 10 м/с',
-        pressure: 755,
-        pressureSub: 'Балтийская ложбина',
-        humidity: 90,
-        dewPoint: 'Точка росы -2.3°C',
-        precip: 'Мокрый снег',
-        precipSub: 'С изморозью и туманом',
-        visibility: '2.0 км',
-        visSub: 'Плотный адвективный туман',
-        extraLabel: 'Акватория Невы',
-        extraVal: 'Вода +3.0°C',
-        extraSub: 'Скользкий гранит спусков',
-        hazardLevel: 'warn',
-        hazardTitle: '⚠️ ВНИМАНИЕ: БАЛТИЙСКИЙ ТУМАН И СКОЛЬЗКИЙ ГРАНИТ',
-        hazardText: 'Снижение видимости в тумане до 2 км, влажность 90%, скользкий гранит набережных, температура воды в Неве +3°C.',
-        particleMode: 'wet_snow_fog',
-        theme: {
-          top: '#091526',
-          mid: '#16293d',
-          bot: '#1f364d',
-          skyTop: '#142438',
-          skyHor: '#304963'
-        },
+        id: 'spb', order: 2, name: 'Санкт-Петербург', station: 'Санкт-Петербург • Петроградская / Акватория Невы', icon: '🌫️',
+        baseTemp: -2, baseFeels: -6, shortCond: 'Мокрый снег, туман', fullCond: 'Пасмурно, мокрый снег, изморозь, туман, Нева +3°C',
+        windDir: 'З', windSpeed: 5.0, windGust: 'С Финского залива до 11 м/с', pressure: 756, pressureSub: 'Балтийская ложбина',
+        humidity: 91, dewPoint: 'Точка росы -3.1°C', precip: 'Мокрый снег', precipSub: 'С изморозью и туманом',
+        visibility: '1.8 км', visSub: 'Плотный адвективный туман', extraLabel: 'Акватория Невы', extraVal: 'Вода +3.0°C', extraSub: 'Скользкий гранит спусков',
+        hazardLevel: 'warn', hazardTitle: '⚠️ ВНИМАНИЕ: БАЛТИЙСКИЙ ТУМАН И СКОЛЬЗКИЙ ГРАНИТ', hazardText: 'Снижение видимости в тумане до 1.8 км, влажность 91%, скользкий гранит набережных.',
+        particleMode: 'wet_snow_fog', theme: { top: '#091526', mid: '#16293d', bot: '#1f364d', skyTop: '#142438', skyHor: '#304963' },
         dayparts: [
-          { name: 'Ночь', hours: '00:00–06:00', h: 3, t: -2, f: -6, desc: 'Туман над Невой, изморозь' },
-          { name: 'Утро', hours: '06:00–12:00', h: 8, t: -2, f: -6, desc: 'Сырой ветер, мокрый снег' },
-          { name: 'День', hours: '12:00–18:00', h: 12, t: -1, f: -5, desc: 'Пасмурно, туман, -1°C' },
-          { name: 'Вечер', hours: '18:00–00:00', h: 20, t: -1, f: -5, desc: 'Сырость 92%, гололедица' }
+          { name: 'Ночь', hours: '00:00–06:00', h: 3, t: -3, f: -7, desc: 'Туман над Невой, изморозь' },
+          { name: 'Утро', hours: '06:00–12:00', h: 8, t: -3, f: -7, desc: 'Сырой ветер, мокрый снег' },
+          { name: 'День', hours: '12:00–18:00', h: 12, t: -2, f: -6, desc: 'Пасмурно, туман, -2°C' },
+          { name: 'Вечер', hours: '18:00–00:00', h: 20, t: -2, f: -6, desc: 'Сырость 91%, гололедица' }
         ],
         landmarks: [
-          {
-            key: 'palace_bridge',
-            name: 'Дворцовый мост и Нева',
-            alt: '14 м',
-            temp: '-1.0°C',
-            wind: '6.5 м/с',
-            eyebrow: 'РУСЛО БОЛЬШОЙ НЕВЫ • ВОДА +3.0°C',
-            desc: 'Контраст между относительно тёплой водой Невы (+3.0°C) и холодным воздухом (-1°C) формирует густой балтийский туман. На металле пролётов Дворцового моста и гранитных спусках образуется прозрачная наледь.'
-          },
-          {
-            key: 'peter_paul',
-            name: 'Шпиль Петропавловского собора',
-            alt: '122.5 м',
-            temp: '-3.2°C',
-            wind: '10.4 м/с',
-            eyebrow: 'ЗАЯЧИЙ ОСТРОВ • ФИГУРА АНГЕЛА (122.5 М)',
-            desc: 'На высоте шпиля Петропавловского собора (122.5 м) температура держится на отметке -3.2°C, верхушка шпиля периодически скрывается в низкой слоистой облачности при ветре с Финского залива до 10.4 м/с.'
-          },
-          {
-            key: 'isaac',
-            name: 'Колоннада Исаакиевского собора',
-            alt: '43 м',
-            temp: '-1.6°C',
-            wind: '7.2 м/с',
-            eyebrow: 'СМОТРОВАЯ КОЛОННАДА • ВЫСОТА 43 М',
-            desc: 'На уровне обзорной колоннады (43 м) дальность видимости исторического центра снижена туманом до 1.8–2.2 км. Влажность воздуха 90%, пронизывающий северо-западный ветер.'
-          }
+          { key: 'palace_bridge', name: 'Дворцовый мост и Нева', alt: '14 м', temp: '-1.5°C', wind: '6.8 м/с', eyebrow: 'РУСЛО БОЛЬШОЙ НЕВЫ • ВОДА +3.0°C', desc: 'Контраст воды (+3°C) и воздуха (-2°C) образует густой туман над Невой.' },
+          { key: 'peter_paul', name: 'Шпиль Петропавловского собора', alt: '122.5 м', temp: '-3.8°C', wind: '11.0 м/с', eyebrow: 'ЗАЯЧИЙ ОСТРОВ • АНГЕЛ (122.5 М)', desc: 'На шпиле температура -3.8°C, шпиль скрыт в облачности.' },
+          { key: 'isaac', name: 'Колоннада Исаакиевского собора', alt: '43 м', temp: '-2.1°C', wind: '7.5 м/с', eyebrow: 'СМОТРОВАЯ КОЛОННАДА • 43 М', desc: 'Видимость центра снижена туманом до 1.8 км.' }
         ]
       },
       {
-        id: 'nsk',
-        order: 3,
-        name: 'Новосибирск',
-        station: 'Новосибирск • Обская ГМО / Бугринский створ',
-        icon: '❄️',
-        baseTemp: -11,
-        baseFeels: -16,
-        shortCond: 'Сибирский снегопад, метель',
-        fullCond: 'Сибирский снегопад, метель, снежные заносы на мостах',
-        windDir: 'СВ',
-        windSpeed: 4.0,
-        windGust: 'Порывы над Обью до 12 м/с',
-        pressure: 767,
-        pressureSub: 'Сибирский антициклон',
-        humidity: 81,
-        dewPoint: 'Точка росы -13.7°C',
-        precip: 'Сибирский снегопад',
-        precipSub: 'Пасмурно, метель',
-        visibility: '1.5 км',
-        visSub: 'Снежная пелена / позёмка',
-        extraLabel: 'Снежный покров',
-        extraVal: '12 см (заносы)',
-        extraSub: 'Накат на мостах через Обь',
-        hazardLevel: 'danger',
-        hazardTitle: '⚠️ ОПАСНО: МЕТЕЛЬ И СНЕЖНЫЕ ЗАНОСЫ НА МОСТАХ',
-        hazardText: 'Метель, сильная гололедица, снежные заносы и плотный снежный накат на Бугринском и Коммунальном мостах.',
-        particleMode: 'blizzard',
-        theme: {
-          top: '#051527',
-          mid: '#0c2540',
-          bot: '#123456',
-          skyTop: '#0a1f38',
-          skyHor: '#1e3f66'
-        },
+        id: 'nsk', order: 3, name: 'Новосибирск', station: 'Новосибирск • Обская ГМО / Бугринский створ', icon: '❄️',
+        baseTemp: -12, baseFeels: -17, shortCond: 'Сибирский снегопад, метель', fullCond: 'Сибирский снегопад, метель, снежные заносы на мостах',
+        windDir: 'СВ', windSpeed: 4.2, windGust: 'Порывы над Обью до 12.5 м/с', pressure: 768, pressureSub: 'Сибирский антициклон',
+        humidity: 82, dewPoint: 'Точка росы -14.5°C', precip: 'Сибирский снегопад', precipSub: 'Пасмурно, метель',
+        visibility: '1.2 км', visSub: 'Снежная пелена / позёмка', extraLabel: 'Снежный покров', extraVal: '14 см (заносы)', extraSub: 'Накат на мостах через Обь',
+        hazardLevel: 'danger', hazardTitle: '⚠️ ОПАСНО: МЕТЕЛЬ И СНЕЖНЫЕ ЗАНОСЫ НА МОСТАХ', hazardText: 'Метель, сильная гололедица, снежные заносы и плотный накат на мостах.',
+        particleMode: 'blizzard', theme: { top: '#051527', mid: '#0c2540', bot: '#123456', skyTop: '#0a1f38', skyHor: '#1e3f66' },
         dayparts: [
-          { name: 'Ночь', hours: '00:00–06:00', h: 3, t: -14, f: -19, desc: 'Мороз и низовая метель' },
-          { name: 'Утро', hours: '06:00–12:00', h: 8, t: -13, f: -18, desc: 'Снегопад, заносы' },
-          { name: 'День', hours: '12:00–18:00', h: 12, t: -11, f: -16, desc: 'Снегопад, метель, -11°C' },
-          { name: 'Вечер', hours: '18:00–00:00', h: 20, t: -12, f: -17, desc: 'Снежный накат, -12°C' }
+          { name: 'Ночь', hours: '00:00–06:00', h: 3, t: -15, f: -21, desc: 'Мороз и низовая метель' },
+          { name: 'Утро', hours: '06:00–12:00', h: 8, t: -14, f: -20, desc: 'Снегопад, заносы' },
+          { name: 'День', hours: '12:00–18:00', h: 12, t: -12, f: -17, desc: 'Снегопад, метель, -12°C' },
+          { name: 'Вечер', hours: '18:00–00:00', h: 20, t: -13, f: -18, desc: 'Снежный накат, -13°C' }
         ],
         landmarks: [
-          {
-            key: 'bugrinsky',
-            name: 'Арка Бугринского моста',
-            alt: '70 м',
-            temp: '-12.5°C',
-            wind: '11.5 м/с',
-            eyebrow: 'РУСЛО РЕКИ ОБЬ • АРОЧНЫЙ ПИЛОН 70 М',
-            desc: 'В открытом створе реки Оби скорость северо-восточного ветра усиливается до 11.5 м/с. Низовая метель формирует перемёты и плотный снежный накат на проезжей части моста, ощущаемая температура падает до -19°C.'
-          },
-          {
-            key: 'novat',
-            name: 'Купол театра НОВАТ',
-            alt: '35 м',
-            temp: '-11.2°C',
-            wind: '5.2 м/с',
-            eyebrow: 'ПЛОЩАДЬ ЛЕНИНА • СЕРЕБРЯНЫЙ КУПОЛ',
-            desc: 'В центральной части Новосибирска высота свежевыпавшего снежного покрова достигла 12 см. Под влиянием высокого давления (767 мм рт. ст.) сохраняется морозная снежная погода.'
-          },
-          {
-            key: 'ob_embankment',
-            name: 'Михайловская набережная Оби',
-            alt: '12 м',
-            temp: '-11.8°C',
-            wind: '7.4 м/с',
-            eyebrow: 'ПРИБРЕЖНАЯ ЗОНА ОБИ • ЛЕДОСТАВ',
-            desc: 'У кромки воды идут активные процессы шугохода и берегового ледостава. Порывистый ветер поднимает снежную позёмку вдоль променада набережной.'
-          }
+          { key: 'bugrinsky', name: 'Арка Бугринского моста', alt: '70 м', temp: '-13.2°C', wind: '12.0 м/с', eyebrow: 'РУСЛО РЕКИ ОБЬ • АРОЧНЫЙ ПИЛОН 70 М', desc: 'В створе Оби ветер усиливается до 12 м/с. Низовая метель формирует перемёты на мосту.' },
+          { key: 'novat', name: 'Купол театра НОВАТ', alt: '35 м', temp: '-12.0°C', wind: '5.5 м/с', eyebrow: 'ПЛОЩАДЬ ЛЕНИНА • СЕРЕБРЯНЫЙ КУПОЛ', desc: 'Высота свежевыпавшего снежного покрова достигла 14 см.' },
+          { key: 'ob_embankment', name: 'Михайловская набережная Оби', alt: '12 м', temp: '-12.6°C', wind: '7.8 м/с', eyebrow: 'ПРИБРЕЖНАЯ ЗОНА ОБИ • ЛЕДОСТАВ', desc: 'Активный ледостав, позёмка вдоль променада.' }
         ]
       },
       {
-        id: 'ekb',
-        order: 4,
-        name: 'Екатеринбург',
-        station: 'Екатеринбург • Уральское УГМС / Городской пруд',
-        icon: '☁️',
-        baseTemp: -8,
-        baseFeels: -13,
-        shortCond: 'Морозная дымка, гололедица',
-        fullCond: 'Пасмурно, морозная дымка, сильная гололедица, изморозь',
-        windDir: 'С',
-        windSpeed: 3.4,
-        windGust: 'Умеренный до 7.5 м/с',
-        pressure: 756,
-        pressureSub: 'Уральский гребень',
-        humidity: 78,
-        dewPoint: 'Точка росы -11.2°C',
-        precip: 'Без сущ. осадков',
-        precipSub: 'Кристаллическая изморозь',
-        visibility: '4.5 км',
-        visSub: 'Морозная уральская дымка',
-        extraLabel: 'Набережные Исети',
-        extraVal: 'Сильная гололедица',
-        extraSub: 'Изморозь на деревьях',
-        hazardLevel: 'warn',
-        hazardTitle: '⚠️ ВНИМАНИЕ: ИЗМОРОЗЬ И СИЛЬНАЯ ГОЛОЛЕДИЦА',
-        hazardText: 'Изморозь на ветвях и проводах, сильная гололедица, скользкие гранитные набережные Городского пруда.',
-        particleMode: 'frost_mist',
-        theme: {
-          top: '#0a1220',
-          mid: '#152238',
-          bot: '#1e2f4d',
-          skyTop: '#121e31',
-          skyHor: '#293d5c'
-        },
+        id: 'ekb', order: 4, name: 'Екатеринбург', station: 'Екатеринбург • Уральское УГМС / Городской пруд', icon: '☁️',
+        baseTemp: -9, baseFeels: -14, shortCond: 'Морозная дымка, гололедица', fullCond: 'Пасмурно, морозная дымка, сильная гололедица, изморозь',
+        windDir: 'С', windSpeed: 3.6, windGust: 'Умеренный до 8.0 м/с', pressure: 757, pressureSub: 'Уральский гребень',
+        humidity: 79, dewPoint: 'Точка росы -12.1°C', precip: 'Без сущ. осадков', precipSub: 'Кристаллическая изморозь',
+        visibility: '4.2 км', visSub: 'Морозная уральская дымка', extraLabel: 'Набережные Исети', extraVal: 'Сильная гололедица', extraSub: 'Изморозь на деревьях',
+        hazardLevel: 'warn', hazardTitle: '⚠️ ВНИМАНИЕ: ИЗМОРОЗЬ И СИЛЬНАЯ ГОЛОЛЕДИЦА', hazardText: 'Изморозь на ветвях, сильная гололедица, скользкие набережные Городского пруда.',
+        particleMode: 'frost_mist', theme: { top: '#0a1220', mid: '#152238', bot: '#1e2f4d', skyTop: '#121e31', skyHor: '#293d5c' },
         dayparts: [
-          { name: 'Ночь', hours: '00:00–06:00', h: 3, t: -10, f: -15, desc: 'Морозно, изморозь' },
-          { name: 'Утро', hours: '06:00–12:00', h: 8, t: -9, f: -14, desc: 'Морозная дымка, -9°C' },
-          { name: 'День', hours: '12:00–18:00', h: 12, t: -8, f: -13, desc: 'Пасмурно, гололедица' },
-          { name: 'Вечер', hours: '18:00–00:00', h: 20, t: -9, f: -14, desc: 'Ледяной накат, -9°C' }
+          { name: 'Ночь', hours: '00:00–06:00', h: 3, t: -11, f: -16, desc: 'Морозно, изморозь' },
+          { name: 'Утро', hours: '06:00–12:00', h: 8, t: -10, f: -15, desc: 'Морозная дымка, -10°C' },
+          { name: 'День', hours: '12:00–18:00', h: 12, t: -9, f: -14, desc: 'Пасмурно, гололедица' },
+          { name: 'Вечер', hours: '18:00–00:00', h: 20, t: -10, f: -15, desc: 'Ледяной накат, -10°C' }
         ],
         landmarks: [
-          {
-            key: 'iset_tower',
-            name: 'Башня «Исеть» (52 этажа)',
-            alt: '209 м',
-            temp: '-11.4°C',
-            wind: '9.2 м/с',
-            eyebrow: 'ЕКАТЕРИНБУРГ-СИТИ • ШПИЛЬ 209 М',
-            desc: 'На вершине самого северного сверхвысокого небоскрёба (209 м) температура воздуха опускается до -11.4°C. На металлоконструкциях короны фиксируется кристаллическая уральская изморозь.'
-          },
-          {
-            key: 'vysotsky',
-            name: 'Небоскрёб «Высоцкий» (Смотровая)',
-            alt: '186 м',
-            temp: '-10.8°C',
-            wind: '8.6 м/с',
-            eyebrow: 'ОТКРЫТАЯ СМОТРОВАЯ ПЛОЩАДКА • 52 ЭТАЖ',
-            desc: 'На открытой смотровой площадке (186 м) ощущаемая температура составляет -17°C из-за северного ветра. Город окутан полупрозрачной морозной дымкой.'
-          },
-          {
-            key: 'sevastyanov',
-            name: 'Дом Севастьянова и Городской пруд',
-            alt: '8 м',
-            temp: '-8.0°C',
-            wind: '3.4 м/с',
-            eyebrow: 'ПЛОТИНКА • АКВАТОРИЯ РЕКИ ИСЕТЬ',
-            desc: 'Акватория Городского пруда затянута первичным неподвижным льдом. На ступенях и тротуарах вдоль проспекта Ленина и набережной Рабочей Молодёжи сохраняется сильная гололедица.'
-          }
+          { key: 'iset_tower', name: 'Башня «Исеть» (52 этажа)', alt: '209 м', temp: '-12.0°C', wind: '9.6 м/с', eyebrow: 'ЕКАТЕРИНБУРГ-СИТИ • ШПИЛЬ 209 М', desc: 'На вершине небоскрёба температура -12.0°C, кристаллическая изморозь.' },
+          { key: 'vysotsky', name: 'Небоскрёб «Высоцкий» (Смотровая)', alt: '186 м', temp: '-11.4°C', wind: '9.0 м/с', eyebrow: 'ОТКРЫТАЯ СМОТРОВАЯ ПЛОЩАДКА • 52 ЭТАЖ', desc: 'Ощущаемая температура -18°C, город в морозной дымке.' },
+          { key: 'sevastyanov', name: 'Дом Севастьянова и Городской пруд', alt: '8 м', temp: '-9.0°C', wind: '3.6 м/с', eyebrow: 'ПЛОТИНКА • РЕКА ИСЕТЬ', desc: 'Пруд затянут льдом, на набережной сильная гололедица.' }
         ]
       },
       {
-        id: 'kzn',
-        order: 5,
-        name: 'Казань',
-        station: 'Казань • Опорная ГМО / Кремлёвский холм',
-        icon: '🌨️',
-        baseTemp: -3,
-        baseFeels: -7,
-        shortCond: 'Слабый снег, гололедица',
-        fullCond: 'Сплошная облачность, слабый снег, гололедица на спусках',
-        windDir: 'СВ',
-        windSpeed: 3.8,
-        windGust: 'Волжский ветер до 8.5 м/с',
-        pressure: 759,
-        pressureSub: 'Ровный барический фон',
-        humidity: 86,
-        dewPoint: 'Точка росы -5.0°C',
-        precip: 'Слабый снег',
-        precipSub: 'Сплошная облачность',
-        visibility: '4.0 км',
-        visSub: 'Туманная дымка над Волгой',
-        extraLabel: 'Спуски Кремля',
-        extraVal: 'Гололедица',
-        extraSub: 'Влажность воздуха 86%',
-        hazardLevel: 'warn',
-        hazardTitle: '⚠️ ВНИМАНИЕ: ВЫСОКАЯ ВЛАЖНОСТЬ (86%) И ГОЛОЛЕДИЦА',
-        hazardText: 'Высокая влажность (86%), туман над акваторией Волги и Казанки, гололедица на наклонных брусчатых спусках.',
-        particleMode: 'snow_calm',
-        theme: {
-          top: '#081822',
-          mid: '#102a3a',
-          bot: '#16384c',
-          skyTop: '#0e2433',
-          skyHor: '#21475e'
-        },
+        id: 'kzn', order: 5, name: 'Казань', station: 'Казань • Опорная ГМО / Кремлёвский холм', icon: '🌨️',
+        baseTemp: -4, baseFeels: -8, shortCond: 'Слабый снег, гололедица', fullCond: 'Сплошная облачность, слабый снег, гололедица на спусках',
+        windDir: 'СВ', windSpeed: 4.0, windGust: 'Волжский ветер до 9.0 м/с', pressure: 760, pressureSub: 'Ровный барический фон',
+        humidity: 87, dewPoint: 'Точка росы -5.8°C', precip: 'Слабый снег', precipSub: 'Сплошная облачность',
+        visibility: '3.8 км', visSub: 'Туманная дымка над Волгой', extraLabel: 'Спуски Кремля', extraVal: 'Гололедица', extraSub: 'Влажность воздуха 87%',
+        hazardLevel: 'warn', hazardTitle: '⚠️ ВНИМАНИЕ: ВЫСОКАЯ ВЛАЖНОСТЬ (87%) И ГОЛОЛЕДИЦА', hazardText: 'Высокая влажность (87%), туман над Волгой, гололедица на наклонных спусках.',
+        particleMode: 'snow_calm', theme: { top: '#081822', mid: '#102a3a', bot: '#16384c', skyTop: '#0e2433', skyHor: '#21475e' },
         dayparts: [
-          { name: 'Ночь', hours: '00:00–06:00', h: 3, t: -5, f: -9, desc: 'Пасмурно, снег, -5°C' },
-          { name: 'Утро', hours: '06:00–12:00', h: 8, t: -4, f: -8, desc: 'Туманная дымка, накат' },
-          { name: 'День', hours: '12:00–18:00', h: 12, t: -3, f: -7, desc: 'Слабый снег, -3°C' },
-          { name: 'Вечер', hours: '18:00–00:00', h: 20, t: -4, f: -8, desc: 'Сырость 86%, гололедица' }
+          { name: 'Ночь', hours: '00:00–06:00', h: 3, t: -6, f: -10, desc: 'Пасмурно, снег, -6°C' },
+          { name: 'Утро', hours: '06:00–12:00', h: 8, t: -5, f: -9, desc: 'Туманная дымка, накат' },
+          { name: 'День', hours: '12:00–18:00', h: 12, t: -4, f: -8, desc: 'Слабый снег, -4°C' },
+          { name: 'Вечер', hours: '18:00–00:00', h: 20, t: -5, f: -9, desc: 'Сырость 87%, гололедица' }
         ],
         landmarks: [
-          {
-            key: 'kul_sharif',
-            name: 'Мечеть Кул-Шариф (Минареты)',
-            alt: '58 м',
-            temp: '-3.8°C',
-            wind: '6.4 м/с',
-            eyebrow: 'КАЗАНСКИЙ КРЕМЛЬ • МИНАРЕТЫ 58 М',
-            desc: 'На высоте бирюзовых куполов и минаретов (58 м) влажный северо-восточный ветер с Казанки усиливается до 6.4 м/с. Высокая влажность (86%) усиливает ощущение мороза до -8°C.'
-          },
-          {
-            key: 'soyembika',
-            name: 'Башня Сююмбике и спуски Кремля',
-            alt: '58 м',
-            temp: '-3.6°C',
-            wind: '6.1 м/с',
-            eyebrow: 'ДОЗОРНАЯ БАШНЯ • КРЕМЛЁВСКИЙ ХОЛМ',
-            desc: 'На наклонных брусчатых проездах Тайницкого спуска и вдоль белокаменных стен Кремля из-за слабой позёмки и сырости образуется скользкая ледяная плёнка.'
-          },
-          {
-            key: 'millennium',
-            name: 'Мост «Миллениум» и акватория Казанки',
-            alt: '45 м',
-            temp: '-3.4°C',
-            wind: '7.5 м/с',
-            eyebrow: 'ПИЛОН «М» (45 М) • РУСЛО КАЗАНКИ',
-            desc: 'Над открытой акваторией Казанки и Куйбышевского водохранилища фиксируется плотная дымка (видимость до 4 км) и снежный накат на эстакаде моста.'
-          }
+          { key: 'kul_sharif', name: 'Мечеть Кул-Шариф (Минареты)', alt: '58 м', temp: '-4.2°C', wind: '6.8 м/с', eyebrow: 'КАЗАНСКИЙ КРЕМЛЬ • МИНАРЕТЫ 58 М', desc: 'На высоте минаретов влажный ветер усиливается до 6.8 м/с.' },
+          { key: 'soyembika', name: 'Башня Сююмбике и спуски Кремля', alt: '58 м', temp: '-4.0°C', wind: '6.4 м/с', eyebrow: 'ДОЗОРНАЯ БАШНЯ • КРЕМЛЁВСКИЙ ХОЛМ', desc: 'На наклонных брусчатых спусках Кремля ледяная плёнка.' },
+          { key: 'millennium', name: 'Мост «Миллениум» и акватория Казанки', alt: '45 м', temp: '-3.8°C', wind: '7.8 м/с', eyebrow: 'ПИЛОН «М» (45 М) • РУСЛО КАЗАНКИ', desc: 'Над акваторией Казанки дымка и снежный накат.' }
         ]
       }
     ];
@@ -1482,20 +469,14 @@
     let activeLandmarkIdx = 0;
     let activeHour = 12;
 
-    function fmtTemp(n) {
-      return (n > 0 ? '+' + n : n) + '°C';
-    }
+    function fmtTemp(n) { return (n > 0 ? '+' + n : n) + '°C'; }
 
-    /* ==========================================================
-       ГЕНЕРАТОР ДЕТАЛИЗИРОВАННЫХ АРХИТЕКТУРНЫХ SVG-ПАНОРАМ
-       ========================================================== */
     function buildPanoramaSVG(city, hour) {
       const isNight = hour < 7 || hour >= 19;
       const isDusk = (hour >= 7 && hour <= 9) || (hour >= 17 && hour < 19);
       const winOpacity = isNight ? 0.92 : (isDusk ? 0.65 : 0.25);
       const starOpacity = isNight ? 0.55 : 0.08;
 
-      // Общие элементы неба, облаков и звезд
       const commonDefs = `
         <defs>
           <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
@@ -1515,111 +496,63 @@
             <stop offset="100%" stop-color="#1e293b"/>
           </linearGradient>
         </defs>
-        <!-- Атмосферная облачность и дымка -->
         <g opacity="${starOpacity}">
-          <circle cx="90" cy="36" r="1.2" fill="#fff"/>
-          <circle cx="240" cy="28" r="1.5" fill="#fff"/>
-          <circle cx="480" cy="42" r="1.2" fill="#fff"/>
-          <circle cx="720" cy="25" r="1.5" fill="#fff"/>
-          <circle cx="880" cy="40" r="1.2" fill="#fff"/>
+          <circle cx="90" cy="36" r="1.2" fill="#fff"/><circle cx="240" cy="28" r="1.5" fill="#fff"/>
+          <circle cx="480" cy="42" r="1.2" fill="#fff"/><circle cx="720" cy="25" r="1.5" fill="#fff"/><circle cx="880" cy="40" r="1.2" fill="#fff"/>
         </g>
         <g opacity="0.22" fill="#94a3b8">
-          <ellipse cx="180" cy="65" rx="140" ry="22"/>
-          <ellipse cx="520" cy="52" rx="190" ry="26"/>
-          <ellipse cx="830" cy="68" rx="150" ry="20"/>
+          <ellipse cx="180" cy="65" rx="140" ry="22"/><ellipse cx="520" cy="52" rx="190" ry="26"/><ellipse cx="830" cy="68" rx="150" ry="20"/>
         </g>
       `;
 
       if (city.id === 'msk') {
         return `<svg viewBox="0 0 1000 270" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
           ${commonDefs}
-          <!-- Дальний силуэт города -->
           <path d="M0 215 L0 175 L60 175 L60 160 L110 160 L110 180 L420 180 L420 155 L465 155 L465 178 L1000 178 L1000 215 Z" fill="#0f1b2d" opacity="0.7"/>
-
-          <!-- 1. Кластер Москва-Сити (Кликабельный) -->
           <g class="landmark-node" onclick="selectLandmark(0)">
-            <!-- Башня Империя -->
             <rect x="115" y="78" width="42" height="137" fill="url(#towerSteel)" stroke="#64748b" stroke-width="1"/>
-            <!-- Башня Эволюция (спираль) -->
             <path d="M166 215 L172 92 L206 92 L200 215 Z" fill="url(#towerBlue)" stroke="#7dd3fc" stroke-width="1"/>
-            <path d="M168 120 L204 135 M170 155 L202 170 M171 185 L200 200" stroke="#bae6fd" stroke-width="1.5" opacity="0.6"/>
-            <!-- Башня Федерация (Восток 374м / Смотровая 354м) -->
             <polygon points="216,215 222,28 268,20 274,215" fill="url(#towerBlue)" stroke="#38bdf8" stroke-width="1.5"/>
-            <!-- Башня Меркурий (Золотая) -->
             <polygon points="282,215 282,66 318,54 318,215" fill="#b45309" opacity="0.85" stroke="#fbbf24" stroke-width="1"/>
-            <!-- Светящиеся окна Москва-Сити -->
             <g fill="#fef08a" opacity="${winOpacity}">
-              <rect x="230" y="45" width="30" height="3"/><rect x="230" y="62" width="30" height="3"/>
-              <rect x="230" y="80" width="30" height="3"/><rect x="230" y="102" width="30" height="3"/>
-              <rect x="230" y="125" width="30" height="3"/><rect x="230" y="148" width="30" height="3"/>
-              <rect x="123" y="95" width="26" height="3"/><rect x="123" y="118" width="26" height="3"/>
-              <rect x="290" y="78" width="20" height="3"/><rect x="290" y="104" width="20" height="3"/>
+              <rect x="230" y="45" width="30" height="3"/><rect x="230" y="62" width="30" height="3"/><rect x="230" y="80" width="30" height="3"/>
             </g>
             <circle cx="245" cy="22" r="3.5" fill="#ef4444" class="beacon-blink"/>
-            <!-- Метка высоты -->
             <g class="landmark-pin" transform="translate(195, 6)">
               <rect x="0" y="0" width="118" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#38bdf8" stroke-width="1.2"/>
-              <text x="59" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Сити • 354 м (-5.5°C)</text>
+              <text x="59" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Сити • 354 м (-6.0°C)</text>
             </g>
           </g>
-
-          <!-- 2. Кремлёвская стена и Спасская башня (Кликабельная) -->
           <g class="landmark-node" onclick="selectLandmark(1)">
-            <!-- Кремлёвская стена с зубцами -->
             <path d="M470 215 L470 172 L670 172 L670 215 Z" fill="#7f1d1d" stroke="#ef4444" stroke-width="0.8"/>
-            <path d="M475 172 L475 166 L483 166 L483 172 M491 172 L491 166 L499 166 L499 172 M507 172 L507 166 L515 166 L515 172 M523 172 L523 166 L531 166 L531 172 M605 172 L605 166 L613 166 L613 172 M621 172 L621 166 L629 166 L629 172 M637 172 L637 166 L645 166 L645 172" fill="#991b1b"/>
-            <!-- Спасская башня -->
             <rect x="548" y="112" width="44" height="103" fill="#991b1b" stroke="#fca5a5" stroke-width="1"/>
             <polygon points="552,112 570,54 588,112" fill="#065f46" stroke="#6ee7b7" stroke-width="1"/>
-            <!-- Куранты -->
             <circle cx="570" cy="132" r="10" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
-            <line x1="570" y1="132" x2="570" y2="125" stroke="#fbbf24" stroke-width="1.5"/>
-            <line x1="570" y1="132" x2="576" y2="132" stroke="#fbbf24" stroke-width="1.5"/>
-            <!-- Рубиновая звезда -->
-            <circle cx="570" cy="48" r="5" fill="#ef4444" filter="drop-shadow(0 0 6px #ef4444)"/>
+            <circle cx="570" cy="48" r="5" fill="#ef4444"/>
             <g class="landmark-pin" transform="translate(512, 22)">
               <rect x="0" y="0" width="116" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#f87171" stroke-width="1.2"/>
               <text x="58" y="14" text-anchor="middle" fill="#fee2e2" font-size="10" font-weight="700" font-family="Inter">Спасская • 71 м</text>
             </g>
           </g>
-
-          <!-- 3. Храм Василия Блаженного и Москворецкий мост (Кликабельный) -->
           <g class="landmark-node" onclick="selectLandmark(2)">
             <rect x="735" y="152" width="85" height="63" fill="#9a3412"/>
-            <path d="M777 152 L765 102 L777 82 L789 102 Z" fill="#d97706"/>
-            <ellipse cx="752" cy="142" rx="13" ry="15" fill="#0284c7"/>
-            <ellipse cx="777" cy="92" rx="14" ry="16" fill="#eab308"/>
-            <ellipse cx="803" cy="142" rx="13" ry="15" fill="#16a34a"/>
+            <ellipse cx="752" cy="142" rx="13" ry="15" fill="#0284c7"/><ellipse cx="777" cy="92" rx="14" ry="16" fill="#eab308"/><ellipse cx="803" cy="142" rx="13" ry="15" fill="#16a34a"/>
             <g class="landmark-pin" transform="translate(722, 54)">
               <rect x="0" y="0" width="112" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#fbbf24" stroke-width="1.2"/>
               <text x="56" y="14" text-anchor="middle" fill="#fef3c7" font-size="10" font-weight="700" font-family="Inter">Спуск • Гололедица</text>
             </g>
           </g>
-
-          <!-- Москва-река с ледяной шугой и заберегами -->
           <rect x="0" y="215" width="1000" height="55" fill="url(#waterGrad)"/>
           <line x1="0" y1="215" x2="1000" y2="215" stroke="#94a3b8" stroke-width="3"/>
-          <g fill="#e2e8f0" opacity="0.45">
-            <ellipse cx="160" cy="232" rx="28" ry="3"/>
-            <ellipse cx="340" cy="244" rx="42" ry="4"/>
-            <ellipse cx="580" cy="235" rx="35" ry="3.5"/>
-            <ellipse cx="810" cy="242" rx="30" ry="3"/>
-          </g>
         </svg>`;
       }
 
       if (city.id === 'spb') {
         return `<svg viewBox="0 0 1000 270" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
           ${commonDefs}
-          <!-- Слой балтийского тумана над Невой -->
           <rect x="0" y="135" width="1000" height="80" fill="url(#fogGrad)"/>
-
-          <!-- 1. Разведённый Дворцовый мост и Ростральная колонна -->
           <g class="landmark-node" onclick="selectLandmark(0)">
-            <!-- Опоры моста -->
-            <rect x="110" y="192" width="95" height="25" fill="#334155"/>
-            <rect x="355" y="192" width="95" height="25" fill="#334155"/>
-            <!-- Разведённые пролёты -->
+            <rect x="110" y="192" width="95" height="25" fill="#334155"/><rect x="355" y="192" width="95" height="25" fill="#334155"/>
             <polygon points="200,196 262,102 272,108 214,200" fill="#475569" stroke="#94a3b8" stroke-width="1.2"/>
             <polygon points="360,196 298,102 288,108 346,200" fill="#475569" stroke="#94a3b8" stroke-width="1.2"/>
             <g class="landmark-pin" transform="translate(215, 72)">
@@ -1627,230 +560,122 @@
               <text x="66" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Дворцовый • Нева +3°C</text>
             </g>
           </g>
-
-          <!-- 2. Петропавловская крепость и золотой шпиль (122.5 м) -->
           <g class="landmark-node" onclick="selectLandmark(1)">
-            <rect x="505" y="185" width="170" height="30" fill="#475569" stroke="#94a3b8" stroke-width="0.8"/>
+            <rect x="505" y="185" width="170" height="30" fill="#475569"/>
             <rect x="568" y="118" width="34" height="67" fill="#d97706"/>
-            <polygon points="573,118 585,22 597,118" fill="#fbbf24" filter="drop-shadow(0 0 8px rgba(251,191,36,0.5))"/>
-            <circle cx="585" cy="19" r="3" fill="#fef08a"/>
+            <polygon points="573,118 585,22 597,118" fill="#fbbf24"/>
             <g class="landmark-pin" transform="translate(522, 6)">
               <rect x="0" y="0" width="128" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#fbbf24" stroke-width="1.2"/>
-              <text x="64" y="14" text-anchor="middle" fill="#fef3c7" font-size="10" font-weight="700" font-family="Inter">Шпиль • 122.5 м (-3.2°C)</text>
+              <text x="64" y="14" text-anchor="middle" fill="#fef3c7" font-size="10" font-weight="700" font-family="Inter">Шпиль • 122.5 м (-3.8°C)</text>
             </g>
           </g>
-
-          <!-- 3. Исаакиевский собор с колоннадой -->
           <g class="landmark-node" onclick="selectLandmark(2)">
-            <rect x="748" y="148" width="124" height="67" fill="#475569" stroke="#94a3b8" stroke-width="1"/>
-            <rect x="768" y="116" width="84" height="32" fill="#64748b"/>
-            <path d="M770 116 Q810 62 850 116 Z" fill="#eab308" stroke="#fde047" stroke-width="1.2"/>
-            <rect x="803" y="72" width="14" height="16" fill="#ca8a04"/>
+            <rect x="748" y="148" width="124" height="67" fill="#475569"/>
+            <path d="M770 116 Q810 62 850 116 Z" fill="#eab308"/>
             <g class="landmark-pin" transform="translate(750, 46)">
               <rect x="0" y="0" width="120" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#38bdf8" stroke-width="1.2"/>
               <text x="60" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Колоннада • 43 м</text>
             </g>
           </g>
-
-          <!-- Воды Невы (+3°C) и гранитная набережная -->
           <rect x="0" y="215" width="1000" height="55" fill="url(#waterGrad)"/>
           <line x1="0" y1="215" x2="1000" y2="215" stroke="#cbd5e1" stroke-width="3"/>
-          <path d="M90 232 L210 232 M380 242 L540 242 M690 234 L860 234" stroke="#38bdf8" stroke-width="1.5" opacity="0.35"/>
         </svg>`;
       }
 
       if (city.id === 'nsk') {
         return `<svg viewBox="0 0 1000 270" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
           ${commonDefs}
-          <!-- Заснеженные сибирские ели на берегу Оби -->
-          <g fill="#1e293b" stroke="#e2e8f0" stroke-width="1">
-            <polygon points="45,215 60,170 75,215"/>
-            <polygon points="70,215 88,162 106,215"/>
-            <polygon points="895,215 912,165 930,215"/>
-            <polygon points="925,215 945,158 965,215"/>
-          </g>
-
-          <!-- 1. Бугринский арочный мост через Обь (Кликабельный) -->
           <g class="landmark-node" onclick="selectLandmark(0)">
-            <!-- Красная дуга пилона (70 м) -->
             <path d="M125 215 Q295 35 465 215" fill="none" stroke="#ef4444" stroke-width="10"/>
-            <path d="M135 215 Q295 52 455 215" fill="none" stroke="#fca5a5" stroke-width="2"/>
-            <!-- Ванты моста -->
-            <g stroke="#cbd5e1" stroke-width="1.2" opacity="0.75">
-              <line x1="185" y1="158" x2="185" y2="195"/>
-              <line x1="220" y1="132" x2="220" y2="195"/>
-              <line x1="258" y1="116" x2="258" y2="195"/>
-              <line x1="295" y1="110" x2="295" y2="195"/>
-              <line x1="332" y1="116" x2="332" y2="195"/>
-              <line x1="370" y1="132" x2="370" y2="195"/>
-              <line x1="405" y1="158" x2="405" y2="195"/>
-            </g>
-            <!-- Полотно моста -->
-            <rect x="85" y="193" width="420" height="8" fill="#64748b" stroke="#e2e8f0" stroke-width="1"/>
+            <rect x="85" y="193" width="420" height="8" fill="#64748b"/>
             <g class="landmark-pin" transform="translate(222, 46)">
               <rect x="0" y="0" width="146" height="20" rx="6" fill="rgba(15,23,42,0.92)" stroke="#ef4444" stroke-width="1.2"/>
               <text x="73" y="14" text-anchor="middle" fill="#fee2e2" font-size="10" font-weight="700" font-family="Inter">Бугринский • 70 м (Метель)</text>
             </g>
           </g>
-
-          <!-- 2. Театр оперы и балета НОВАТ (Кликабельный) -->
           <g class="landmark-node" onclick="selectLandmark(1)">
-            <rect x="575" y="160" width="190" height="55" fill="#475569" stroke="#cbd5e1" stroke-width="1"/>
-            <!-- Серебряный чешуйчатый купол -->
-            <path d="M595 160 Q670 74 745 160 Z" fill="#94a3b8" stroke="#f8fafc" stroke-width="1.5"/>
-            <!-- Колоннада портика -->
-            <g fill="#e2e8f0">
-              <rect x="615" y="168" width="6" height="42"/><rect x="635" y="168" width="6" height="42"/>
-              <rect x="655" y="168" width="6" height="42"/><rect x="675" y="168" width="6" height="42"/>
-              <rect x="695" y="168" width="6" height="42"/><rect x="715" y="168" width="6" height="42"/>
-            </g>
+            <rect x="575" y="160" width="190" height="55" fill="#475569"/>
+            <path d="M595 160 Q670 74 745 160 Z" fill="#94a3b8"/>
             <g class="landmark-pin" transform="translate(606, 68)">
               <rect x="0" y="0" width="128" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#38bdf8" stroke-width="1.2"/>
-              <text x="64" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">НОВАТ • Снег 12 см</text>
+              <text x="64" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">НОВАТ • Снег 14 см</text>
             </g>
           </g>
-
-          <!-- 3. Набережная Оби -->
           <g class="landmark-node" onclick="selectLandmark(2)">
-            <rect x="795" y="145" width="75" height="70" fill="#334155" stroke="#94a3b8" stroke-width="1"/>
+            <rect x="795" y="145" width="75" height="70" fill="#334155"/>
             <g class="landmark-pin" transform="translate(772, 114)">
               <rect x="0" y="0" width="122" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#38bdf8" stroke-width="1.2"/>
-              <text x="61" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Русло Оби • -11.8°C</text>
+              <text x="61" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Русло Оби • -12.6°C</text>
             </g>
           </g>
-
-          <!-- Заснеженная Обь и ледяные поля -->
           <rect x="0" y="215" width="1000" height="55" fill="#0f253e"/>
           <line x1="0" y1="215" x2="1000" y2="215" stroke="#ffffff" stroke-width="4"/>
-          <path d="M0 222 Q250 216 500 224 T1000 220" fill="none" stroke="#e2e8f0" stroke-width="3" opacity="0.65"/>
         </svg>`;
       }
 
       if (city.id === 'ekb') {
         return `<svg viewBox="0 0 1000 270" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
           ${commonDefs}
-          <!-- Силуэт Уральских гор на горизонте -->
-          <path d="M0 215 L0 165 Q180 125 360 170 T750 150 L1000 175 L1000 215 Z" fill="#0f172a" opacity="0.65"/>
-
-          <!-- 1. Башня Исеть 209 м (Кликабельная) -->
           <g class="landmark-node" onclick="selectLandmark(0)">
             <rect x="175" y="26" width="58" height="189" rx="6" fill="url(#towerBlue)" stroke="#7dd3fc" stroke-width="1.5"/>
-            <polygon points="175,38 204,20 233,38" fill="#38bdf8" opacity="0.7"/>
-            <g fill="#fef08a" opacity="${winOpacity}">
-              <rect x="184" y="48" width="40" height="3"/><rect x="184" y="68" width="40" height="3"/>
-              <rect x="184" y="88" width="40" height="3"/><rect x="184" y="108" width="40" height="3"/>
-              <rect x="184" y="128" width="40" height="3"/><rect x="184" y="148" width="40" height="3"/>
-              <rect x="184" y="168" width="40" height="3"/>
-            </g>
             <circle cx="204" cy="18" r="3.5" fill="#ef4444" class="beacon-blink"/>
             <g class="landmark-pin" transform="translate(132, 4)">
               <rect x="0" y="0" width="142" height="20" rx="6" fill="rgba(15,23,42,0.92)" stroke="#38bdf8" stroke-width="1.2"/>
-              <text x="71" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Башня Исеть • 209 м (-11.4°)</text>
+              <text x="71" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Башня Исеть • 209 м (-12.0°)</text>
             </g>
           </g>
-
-          <!-- 2. Небоскрёб Высоцкий 186 м (Кликабельный) -->
           <g class="landmark-node" onclick="selectLandmark(1)">
-            <rect x="335" y="44" width="64" height="171" fill="url(#towerSteel)" stroke="#93c5fd" stroke-width="1.2"/>
-            <rect x="332" y="48" width="70" height="6" fill="#38bdf8"/>
-            <g fill="#fef08a" opacity="${winOpacity}">
-              <rect x="345" y="65" width="44" height="3"/><rect x="345" y="88" width="44" height="3"/>
-              <rect x="345" y="112" width="44" height="3"/><rect x="345" y="136" width="44" height="3"/>
-            </g>
+            <rect x="335" y="44" width="64" height="171" fill="url(#towerSteel)"/>
             <g class="landmark-pin" transform="translate(308, 18)">
               <rect x="0" y="0" width="124" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#38bdf8" stroke-width="1.2"/>
               <text x="62" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Высоцкий • 186 м</text>
             </g>
           </g>
-
-          <!-- 3. Дом Севастьянова и Городской пруд в изморози -->
           <g class="landmark-node" onclick="selectLandmark(2)">
-            <rect x="555" y="142" width="165" height="73" fill="#059669" stroke="#a7f3d0" stroke-width="1.5"/>
-            <path d="M585 142 Q615 106 645 142 Z" fill="#047857" stroke="#f8fafc" stroke-width="1.2"/>
-            <g fill="#ffffff" opacity="0.85">
-              <rect x="572" y="156" width="14" height="22" rx="7"/>
-              <rect x="602" y="156" width="14" height="22" rx="7"/>
-              <rect x="632" y="156" width="14" height="22" rx="7"/>
-              <rect x="662" y="156" width="14" height="22" rx="7"/>
-              <rect x="692" y="156" width="14" height="22" rx="7"/>
-            </g>
+            <rect x="555" y="142" width="165" height="73" fill="#059669"/>
+            <path d="M585 142 Q615 106 645 142 Z" fill="#047857"/>
             <g class="landmark-pin" transform="translate(566, 86)">
               <rect x="0" y="0" width="146" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#34d399" stroke-width="1.2"/>
               <text x="73" y="14" text-anchor="middle" fill="#d1fae5" font-size="10" font-weight="700" font-family="Inter">Городской пруд • Изморозь</text>
             </g>
           </g>
-
-          <!-- Деревья в белой уральской изморози на набережной -->
-          <g fill="none" stroke="#e2e8f0" stroke-width="2" opacity="0.8">
-            <circle cx="780" cy="185" r="18" fill="rgba(226,232,240,0.25)"/>
-            <circle cx="825" cy="182" r="21" fill="rgba(226,232,240,0.25)"/>
-            <circle cx="870" cy="187" r="17" fill="rgba(226,232,240,0.25)"/>
-          </g>
-
-          <!-- Скованный льдом Городской пруд -->
           <rect x="0" y="215" width="1000" height="55" fill="#17253b"/>
           <line x1="0" y1="215" x2="1000" y2="215" stroke="#e2e8f0" stroke-width="3.5"/>
         </svg>`;
       }
 
-      // 5. КАЗАНЬ
       return `<svg viewBox="0 0 1000 270" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
         ${commonDefs}
-        <!-- Кремлёвский белокаменный холм -->
         <path d="M90 215 L145 170 L680 170 L745 215 Z" fill="#e2e8f0" opacity="0.88"/>
-
-        <!-- 1. Мечеть Кул-Шариф (Кликабельная) -->
         <g class="landmark-node" onclick="selectLandmark(0)">
-          <!-- 4 минарета с бирюзовыми шатрами (58 м) -->
-          <rect x="195" y="64" width="11" height="106" fill="#f8fafc" stroke="#94a3b8" stroke-width="0.8"/>
-          <polygon points="193,64 200.5,32 208,64" fill="#0284c7"/>
-          <rect x="225" y="76" width="10" height="94" fill="#f8fafc"/>
-          <polygon points="223,76 230,48 237,76" fill="#0284c7"/>
-          <rect x="335" y="76" width="10" height="94" fill="#f8fafc"/>
-          <polygon points="333,76 340,48 347,76" fill="#0284c7"/>
-          <rect x="364" y="64" width="11" height="106" fill="#f8fafc" stroke="#94a3b8" stroke-width="0.8"/>
-          <polygon points="362,64 369.5,32 377,64" fill="#0284c7"/>
-          <!-- Центральный купол -->
-          <rect x="238" y="122" width="94" height="48" fill="#f1f5f9"/>
-          <path d="M242 122 Q285 68 328 122 Z" fill="#0284c7" stroke="#38bdf8" stroke-width="1.5"/>
+          <rect x="195" y="64" width="11" height="106" fill="#f8fafc"/><polygon points="193,64 200.5,32 208,64" fill="#0284c7"/>
+          <rect x="364" y="64" width="11" height="106" fill="#f8fafc"/><polygon points="362,64 369.5,32 377,64" fill="#0284c7"/>
+          <path d="M242 122 Q285 68 328 122 Z" fill="#0284c7"/>
           <g class="landmark-pin" transform="translate(216, 8)">
             <rect x="0" y="0" width="138" height="20" rx="6" fill="rgba(15,23,42,0.92)" stroke="#38bdf8" stroke-width="1.2"/>
-            <text x="69" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Кул-Шариф • 58 м (-3.8°C)</text>
+            <text x="69" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Кул-Шариф • 58 м (-4.2°C)</text>
           </g>
         </g>
-
-        <!-- 2. Башня Сююмбике и Спасская башня Казанского Кремля -->
         <g class="landmark-node" onclick="selectLandmark(1)">
-          <!-- Ярусы башни Сююмбике -->
           <rect x="485" y="135" width="44" height="35" fill="#9a3412"/>
-          <rect x="491" y="106" width="32" height="29" fill="#b45309"/>
-          <rect x="497" y="82" width="20" height="24" fill="#9a3412"/>
           <polygon points="497,82 507,44 517,82" fill="#047857"/>
           <g class="landmark-pin" transform="translate(442, 18)">
             <rect x="0" y="0" width="132" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#fbbf24" stroke-width="1.2"/>
             <text x="66" y="14" text-anchor="middle" fill="#fef3c7" font-size="10" font-weight="700" font-family="Inter">Сююмбике • Гололедица</text>
           </g>
         </g>
-
-        <!-- 3. Мост Миллениум через Казанку -->
         <g class="landmark-node" onclick="selectLandmark(2)">
           <path d="M755 215 L790 105 L815 168 L840 105 L875 215" fill="none" stroke="#fbbf24" stroke-width="6"/>
-          <rect x="720" y="192" width="230" height="6" fill="#64748b"/>
           <g class="landmark-pin" transform="translate(752, 72)">
             <rect x="0" y="0" width="128" height="20" rx="6" fill="rgba(15,23,42,0.9)" stroke="#38bdf8" stroke-width="1.2"/>
-            <text x="64" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Миллениум • Сырость 86%</text>
+            <text x="64" y="14" text-anchor="middle" fill="#e0f2fe" font-size="10" font-weight="700" font-family="Inter">Миллениум • Сырость 87%</text>
           </g>
         </g>
-
-        <!-- Акватория Волги и Казанки -->
         <rect x="0" y="215" width="1000" height="55" fill="url(#waterGrad)"/>
         <line x1="0" y1="215" x2="1000" y2="215" stroke="#cbd5e1" stroke-width="3"/>
       </svg>`;
     }
 
-    /* ==========================================================
-       РЕНДЕРИНГ ИНТЕРФЕЙСА ДАШБОРДА
-       ========================================================== */
     function renderCityTabs() {
       const container = document.getElementById('cityTabs');
       container.innerHTML = '';
@@ -1858,14 +683,8 @@
         const btn = document.createElement('button');
         btn.className = `city-tab ${idx === activeCityIdx ? 'active' : ''}`;
         btn.innerHTML = `
-          <div class="tab-top">
-            <span class="tab-city-name">${city.order}. ${city.name}</span>
-            <span class="tab-icon">${city.icon}</span>
-          </div>
-          <div class="tab-temp-row">
-            <span class="tab-temp">${fmtTemp(city.baseTemp)}</span>
-            <span class="tab-feels">ощущ. ${fmtTemp(city.baseFeels)}</span>
-          </div>
+          <div class="tab-top"><span class="tab-city-name">${city.order}. ${city.name}</span><span>${city.icon}</span></div>
+          <div class="tab-temp-row"><span class="tab-temp">${fmtTemp(city.baseTemp)}</span><span class="tab-feels">ощущ. ${fmtTemp(city.baseFeels)}</span></div>
           <div class="tab-cond">${city.shortCond}</div>
         `;
         btn.onclick = () => selectCity(idx);
@@ -1877,7 +696,7 @@
       playTone(580, 0.08);
       activeCityIdx = idx;
       activeLandmarkIdx = 0;
-      activeHour = 12; // Сброс на эталонный дневной срез 12:00 при смене города
+      activeHour = 12;
       document.getElementById('hourSlider').value = 12;
       renderAll();
       initParticlesForCity(CITIES[activeCityIdx].particleMode);
@@ -1893,7 +712,6 @@
       const city = CITIES[activeCityIdx];
       const chipsWrap = document.getElementById('landmarksChips');
       chipsWrap.innerHTML = '';
-
       city.landmarks.forEach((lm, idx) => {
         const chip = document.createElement('button');
         chip.className = `landmark-chip ${idx === activeLandmarkIdx ? 'active' : ''}`;
@@ -1901,7 +719,6 @@
         chip.onclick = () => selectLandmark(idx);
         chipsWrap.appendChild(chip);
       });
-
       const activeLm = city.landmarks[activeLandmarkIdx];
       document.getElementById('activeLandmarkHint').textContent = `Точка замера: ${activeLandmarkIdx + 1} из ${city.landmarks.length}`;
       document.getElementById('inspEyebrow').textContent = activeLm.eyebrow;
@@ -1916,25 +733,16 @@
       const city = CITIES[activeCityIdx];
       const grid = document.getElementById('daypartsGrid');
       grid.innerHTML = '';
-
       city.dayparts.forEach(dp => {
-        const isCurrent =
-          (dp.name === 'Ночь' && activeHour >= 0 && activeHour < 6) ||
-          (dp.name === 'Утро' && activeHour >= 6 && activeHour < 12) ||
-          (dp.name === 'День' && activeHour >= 12 && activeHour < 18) ||
-          (dp.name === 'Вечер' && activeHour >= 18);
-
+        const isCurrent = (dp.name === 'Ночь' && activeHour >= 0 && activeHour < 6) ||
+                          (dp.name === 'Утро' && activeHour >= 6 && activeHour < 12) ||
+                          (dp.name === 'День' && activeHour >= 12 && activeHour < 18) ||
+                          (dp.name === 'Вечер' && activeHour >= 18);
         const card = document.createElement('div');
         card.className = `daypart-item ${isCurrent ? 'active' : ''}`;
         card.innerHTML = `
-          <div class="dp-top">
-            <span class="dp-name">${dp.name}</span>
-            <span class="dp-hours">${dp.hours}</span>
-          </div>
-          <div class="dp-temp-row">
-            <span class="dp-temp">${fmtTemp(dp.t)}</span>
-            <span class="dp-feels">ощущ. ${fmtTemp(dp.f)}</span>
-          </div>
+          <div class="dp-top"><span class="dp-name">${dp.name}</span><span class="dp-hours">${dp.hours}</span></div>
+          <div class="dp-temp-row"><span class="dp-temp">${fmtTemp(dp.t)}</span><span class="dp-feels">ощущ. ${fmtTemp(dp.f)}</span></div>
           <div class="dp-desc">${dp.desc}</div>
         `;
         card.onclick = () => {
@@ -1950,38 +758,29 @@
     function updateTimeDependentUI() {
       const city = CITIES[activeCityIdx];
       const h = parseInt(activeHour, 10);
-
-      // На 12:00 всегда выводим строго эталонные цифры сводки
       let tempOffset = 0;
       if (h !== 12) {
         if (h >= 0 && h < 6) tempOffset = -2;
         else if (h >= 6 && h < 11) tempOffset = -1;
         else if (h >= 18) tempOffset = -1;
       }
-
       const displayTemp = city.baseTemp + tempOffset;
       const displayFeels = city.baseFeels + tempOffset;
-      const displayWind = h === 12
-        ? city.windSpeed.toFixed(1)
-        : Math.max(1.5, city.windSpeed + (h >= 12 && h <= 17 ? 0.2 : -0.3)).toFixed(1);
+      const displayWind = h === 12 ? city.windSpeed.toFixed(1) : Math.max(1.5, city.windSpeed + (h >= 12 && h <= 17 ? 0.2 : -0.3)).toFixed(1);
 
-      // Обновление главных цифр
       document.getElementById('mainTemp').textContent = fmtTemp(displayTemp);
       document.getElementById('mainFeels').textContent = fmtTemp(displayFeels);
       document.getElementById('mWind').textContent = `${city.windDir} ${displayWind} м/с`;
 
-      // Подпись часов на слайдере
       const padH = h < 10 ? '0' + h : h;
       const periodName = h < 6 ? 'Ночной срез' : (h < 12 ? 'Утренний срез' : (h < 18 ? 'Дневной срез (Эталон сводки)' : 'Вечерний срез'));
       document.getElementById('timelineClock').textContent = `${padH}:00 • ${periodName}`;
 
-      // Смена оттенка неба в зависимости от времени суток
       const root = document.documentElement;
       const isNight = h < 7 || h >= 19;
       root.style.setProperty('--sky-top', isNight ? '#050b16' : city.theme.skyTop);
       root.style.setProperty('--sky-horizon', isNight ? '#112238' : city.theme.skyHor);
 
-      // Перерисовка SVG с учетом ночной/дневной иллюминации окон
       document.getElementById('panoramaSvgWrap').innerHTML = buildPanoramaSVG(city, h);
       renderDayparts();
     }
@@ -1994,19 +793,16 @@
       root.style.setProperty('--bg-bot', city.theme.bot);
 
       renderCityTabs();
-
       document.getElementById('stageCityBadge').textContent = `📍 ${city.order}. ${city.name} • Архитектурная панорама и микроклимат`;
       document.getElementById('mainCitySub').textContent = city.station;
       document.getElementById('mainCondIcon').textContent = city.icon;
       document.getElementById('mainCondText').textContent = city.fullCond;
 
-      // Блок опасных явлений
       const hazardBox = document.getElementById('hazardBox');
       hazardBox.className = `hazard-alert-box ${city.hazardLevel === 'danger' ? 'danger' : ''}`;
       document.getElementById('hazardHeader').textContent = city.hazardTitle;
       document.getElementById('hazardText').textContent = city.hazardText;
 
-      // Карточки метрик
       document.getElementById('mWindGust').textContent = city.windGust;
       document.getElementById('mPressure').textContent = `${city.pressure} мм рт. ст.`;
       document.getElementById('mPressureSub').textContent = city.pressureSub;
@@ -2030,18 +826,12 @@
       updateTimeDependentUI();
     });
 
-    /* ==========================================================
-       ФИЗИЧЕСКИЙ ДВИЖОК ПОГОДНЫХ ЧАСТИЦ НА CANVAS
-       ========================================================== */
     const canvas = document.getElementById('weatherCanvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
     let currentParticleMode = 'snow_calm';
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
+    function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
@@ -2049,11 +839,9 @@
       currentParticleMode = mode;
       particles = [];
       const count = mode === 'blizzard' ? 110 : (mode === 'frost_mist' ? 55 : 75);
-
       for (let i = 0; i < count; i++) {
         particles.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
+          x: Math.random() * canvas.width, y: Math.random() * canvas.height,
           r: mode === 'blizzard' ? Math.random() * 2.8 + 1.2 : Math.random() * 2.4 + 1,
           vy: mode === 'blizzard' ? Math.random() * 2.6 + 1.8 : (mode === 'frost_mist' ? Math.random() * 0.5 + 0.2 : Math.random() * 1.2 + 0.5),
           vx: mode === 'blizzard' ? Math.random() * 3.8 + 2.2 : (mode === 'wet_snow_fog' ? Math.random() * 1.1 + 0.4 : (Math.random() - 0.5) * 0.7),
@@ -2064,37 +852,25 @@
 
     function animateWeather() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
       for (let i = 0; i < particles.length; i++) {
         const p = particles[i];
         ctx.beginPath();
         if (currentParticleMode === 'wet_snow_fog') {
           ctx.strokeStyle = `rgba(186, 230, 253, ${p.alpha})`;
           ctx.lineWidth = 1.4;
-          ctx.moveTo(p.x, p.y);
-          ctx.lineTo(p.x + p.vx * 3, p.y + p.vy * 4);
-          ctx.stroke();
+          ctx.moveTo(p.x, p.y); ctx.lineTo(p.x + p.vx * 3, p.y + p.vy * 4); ctx.stroke();
         } else {
           ctx.fillStyle = `rgba(241, 245, 249, ${p.alpha})`;
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-          ctx.fill();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill();
         }
-
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.y > canvas.height + 10) {
-          p.y = -10;
-          p.x = Math.random() * canvas.width;
-        }
+        p.x += p.vx; p.y += p.vy;
+        if (p.y > canvas.height + 10) { p.y = -10; p.x = Math.random() * canvas.width; }
         if (p.x > canvas.width + 10) p.x = -10;
         if (p.x < -10) p.x = canvas.width + 10;
       }
-
       requestAnimationFrame(animateWeather);
     }
 
-    // Инициализация при загрузке
     renderAll();
     initParticlesForCity(CITIES[0].particleMode);
     animateWeather();
